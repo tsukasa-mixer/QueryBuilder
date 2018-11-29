@@ -1,8 +1,8 @@
 <?php
 
-namespace Mindy\QueryBuilder\Aggregation;
+namespace Tsukasa\QueryBuilder\Aggregation;
 
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class Max extends Aggregation
 {

@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 22/06/16
- * Time: 11:08
- */
 
-namespace Mindy\QueryBuilder\Database\Pgsql;
+namespace Tsukasa\QueryBuilder\Database\Pgsql;
 
-use Mindy\QueryBuilder\BaseLookupCollection;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\BaseLookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 
 class LookupCollection extends BaseLookupCollection
 {

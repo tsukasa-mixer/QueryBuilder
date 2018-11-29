@@ -1,10 +1,10 @@
 <?php
-namespace Mindy\QueryBuilder\Database\Mysql;
+namespace Tsukasa\QueryBuilder\Database\Mysql;
 
 use Exception;
-use Mindy\QueryBuilder\BaseAdapter;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ISQLGenerator;
+use Tsukasa\QueryBuilder\BaseAdapter;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 
 class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
 {

@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/06/16
- * Time: 11:59
- */
 
-namespace Mindy\QueryBuilder\Q;
+namespace Tsukasa\QueryBuilder\Q;
 
 use Exception;
-use Mindy\QueryBuilder\Expression;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ILookupBuilder;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 abstract class Q
 {

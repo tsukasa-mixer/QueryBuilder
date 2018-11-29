@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 22/06/16
- * Time: 11:08
- */
 
-namespace Mindy\QueryBuilder\Database\Pgsql;
+namespace Tsukasa\QueryBuilder\Database\Pgsql;
 
 use Exception;
-use Mindy\QueryBuilder\BaseAdapter;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\BaseAdapter;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 
 class Adapter extends BaseAdapter implements IAdapter
 {

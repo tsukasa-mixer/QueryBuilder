@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/06/16
- * Time: 20:36
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Database\Sqlite\Adapter;
+use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 use PDO;
 
 class SqliteQuoteTest extends BaseTest

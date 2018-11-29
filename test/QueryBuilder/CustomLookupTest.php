@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 22/06/16
- * Time: 12:46
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ILookupCollection;
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\Database\Mysql\Adapter;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\Database\Mysql\Adapter;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupLibrary implements ILookupCollection
 {

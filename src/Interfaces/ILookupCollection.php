@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 15:20
- */
 
-namespace Mindy\QueryBuilder\Interfaces;
+namespace Tsukasa\QueryBuilder\Interfaces;
 
 interface ILookupCollection
 {

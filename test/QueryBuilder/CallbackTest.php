@@ -3,11 +3,11 @@
 namespace Mindy\Tests\QueryBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\Interfaces\ILookupBuilder;
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\QueryBuilder;
-use Mindy\QueryBuilder\QueryBuilderFactory;
-use Mindy\QueryBuilder\Database\Sqlite\Adapter;
+use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilderFactory;
+use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 
 class CallbackTestCallback
 {

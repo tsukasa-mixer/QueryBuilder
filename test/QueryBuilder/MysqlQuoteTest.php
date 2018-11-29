@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/06/16
- * Time: 19:46
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Database\Mysql\Adapter;
+use Tsukasa\QueryBuilder\Database\Mysql\Adapter;
 use PDO;
 
 class MysqlQuoteTest extends \PHPUnit_Framework_TestCase

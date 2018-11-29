@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 22/06/16
- * Time: 10:02
- */
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\Driver\Connection;
-use Mindy\QueryBuilder\Interfaces\ICallback;
-use Mindy\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\Interfaces\ICallback;
+use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 
 class QueryBuilderFactory
 {

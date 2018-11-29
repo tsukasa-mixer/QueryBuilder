@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 04/07/16
- * Time: 18:57
- */
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 class Expression
 {

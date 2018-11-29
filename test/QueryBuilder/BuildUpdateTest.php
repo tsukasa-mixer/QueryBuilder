@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/07/16
- * Time: 20:34
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Expression;
 
 class BuildUpdateTest extends BaseTest
 {

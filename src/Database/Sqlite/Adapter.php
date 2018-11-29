@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 17:17
- */
 
-namespace Mindy\QueryBuilder\Database\Sqlite;
+namespace Tsukasa\QueryBuilder\Database\Sqlite;
 
 use Exception;
-use Mindy\QueryBuilder\BaseAdapter;
-use Mindy\QueryBuilder\Exception\NotSupportedException;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ISQLGenerator;
+use Tsukasa\QueryBuilder\BaseAdapter;
+use Tsukasa\QueryBuilder\Exception\NotSupportedException;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 
 class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
 {

@@ -16,9 +16,9 @@ composer require mindy/query_builder
 ```php
 require('vendor/autoload.php'); // Composer autoloader
 
-use Mindy\QueryBuilder\QueryFactory;
-use Mindy\QueryBuilder\Mysql\Adapter;
-use Mindy\QueryBuilder\LegacyLookupBuilder;
+use Tsukasa\QueryBuilder\QueryFactory;
+use Tsukasa\QueryBuilder\Mysql\Adapter;
+use Tsukasa\QueryBuilder\LegacyLookupBuilder;
 
 $pdo = new PDO(...);
 // PDO является не обязательным, используется для экранирования
@@ -66,19 +66,6 @@ echo $qb->toSQL();
 | lt | ```foo < 10``` | ```$qb->setWhere(['foo__lt' => 10])``` |
 | isnull | ```foo IS NOT NULL``` | ```$qb->setWhere(['foo__isnull' => false])``` |
 
-## LegacyLookupBuilder
-
-```php
-$qb = new QueryBuilder(new MysqlAdapter($pdo), new LegacyLookupBuilder);
-$qb
-	->setTypeSelect()
-	->setSelect('*')
-	->setFrom('comment')
-	->setWhere(['id__gte' => 1])
-	->setOrder(['created_at']);
-$pdo->query($qb->toSQL())->fetchAll();
-```
-
 ## LookupBuilder
 
 ```php
@@ -91,15 +78,4 @@ $qb
 	->setOrder(['created_at']);
 $pdo->query($qb->toSQL())->fetchAll();
 ```
-
-## Известные проблемы
-
-При использовании `LegacyLookupBuilder` невозможно использовать вложенные `lookup`ы. 
-
-Пример:
-
-```php
-['created_at__second__gte' => 200]
-```
-
-`second, day, month, year, week_day, minute, hour` работают только в режиме `exact`.
+ year, week_day, minute, hour` работают только в режиме `exact`.

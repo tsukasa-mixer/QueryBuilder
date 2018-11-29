@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 15/09/16
- * Time: 14:20
- */
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\DriverManager;
 
 /**
  * Class ConnectionManager
- * @package Mindy\QueryBuilder
+ * @package Tsukasa\QueryBuilder
  */
 class ConnectionManager
 {

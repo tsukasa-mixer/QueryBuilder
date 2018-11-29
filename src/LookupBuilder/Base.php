@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/06/16
- * Time: 15:35
- */
 
-namespace Mindy\QueryBuilder\LookupBuilder;
+namespace Tsukasa\QueryBuilder\LookupBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ILookupBuilder;
-use Mindy\QueryBuilder\Interfaces\ILookupCollection;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 abstract class Base implements ILookupBuilder
 {

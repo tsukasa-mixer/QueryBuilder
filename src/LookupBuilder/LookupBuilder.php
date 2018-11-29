@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 10:39
- */
 
-namespace Mindy\QueryBuilder\LookupBuilder;
+namespace Tsukasa\QueryBuilder\LookupBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupBuilder extends Base
 {

@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 15:04
- */
 
-namespace Mindy\QueryBuilder\Database\Sqlite;
+namespace Tsukasa\QueryBuilder\Database\Sqlite;
 
-use Mindy\QueryBuilder\BaseLookupCollection;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\BaseLookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 
 class LookupCollection extends BaseLookupCollection
 {

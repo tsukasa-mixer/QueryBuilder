@@ -1,26 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 10:17
- */
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\Driver\Connection;
 use Exception;
-use Mindy\QueryBuilder\Aggregation\Aggregation;
-use Mindy\QueryBuilder\Interfaces\ILookupBuilder;
-use Mindy\QueryBuilder\Interfaces\ILookupCollection;
-use Mindy\QueryBuilder\Interfaces\ISQLGenerator;
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\Q\Q;
-use Mindy\QueryBuilder\Q\QAnd;
+use Tsukasa\QueryBuilder\Aggregation\Aggregation;
+use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\Q\Q;
+use Tsukasa\QueryBuilder\Q\QAnd;
 
-use Mindy\QueryBuilder\Database\Mysql\Adapter as MysqlAdapter;
-use Mindy\QueryBuilder\Database\Sqlite\Adapter as SqliteAdapter;
-use Mindy\QueryBuilder\Database\Pgsql\Adapter as PgsqlAdapter;
+use Tsukasa\QueryBuilder\Database\Mysql\Adapter as MysqlAdapter;
+use Tsukasa\QueryBuilder\Database\Sqlite\Adapter as SqliteAdapter;
+use Tsukasa\QueryBuilder\Database\Pgsql\Adapter as PgsqlAdapter;
 
 class QueryBuilder
 {
@@ -54,7 +48,7 @@ class QueryBuilder
      */
     private $_group = [];
     /**
-     * @var array|string|\Mindy\QueryBuilder\Aggregation\Aggregation
+     * @var array|string|\Tsukasa\QueryBuilder\Aggregation\Aggregation
      */
     private $_select = [];
     /**
@@ -476,7 +470,7 @@ class QueryBuilder
     }
 
     /**
-     * @return ILookupBuilder|\Mindy\QueryBuilder\LookupBuilder\LookupBuilder
+     * @return ILookupBuilder|\Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder
      */
     public function getLookupBuilder()
     {

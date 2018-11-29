@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 30/06/16
- * Time: 10:07
- */
 
 namespace Mindy\Tests\QueryBuilder;
 

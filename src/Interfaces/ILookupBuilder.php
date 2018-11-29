@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 14:55
- */
 
-namespace Mindy\QueryBuilder\Interfaces;
-use Mindy\QueryBuilder\QueryBuilder;
+namespace Tsukasa\QueryBuilder\Interfaces;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 /**
  * Interface ILookupBuilder
- * @package Mindy\QueryBuilder
+ * @package Tsukasa\QueryBuilder
  */
 interface ILookupBuilder
 {

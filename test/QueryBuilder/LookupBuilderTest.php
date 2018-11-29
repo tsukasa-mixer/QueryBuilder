@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 15:00
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\Database\Sqlite\LookupCollection;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\Database\Sqlite\LookupCollection;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupBuilderTest extends BaseTest
 {

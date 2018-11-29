@@ -1,9 +1,9 @@
 <?php
 
-namespace Mindy\QueryBuilder\Aggregation;
+namespace Tsukasa\QueryBuilder\Aggregation;
 
-use Mindy\QueryBuilder\Expression;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class Aggregation extends Expression
 {

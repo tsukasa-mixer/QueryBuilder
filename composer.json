@@ -1,11 +1,22 @@
 {
-  "name": "mindy/query_builder",
+  "name": "tsukasa/query_builder",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
       "name": "Falaleev Maxim",
-      "email": "max@studio107.ru"
+      "email": "max@studio107.ru",
+      "role": "Developer"
+    },
+    {
+      "name": "Okulov Anton",
+      "email": "qantus@mail.ru",
+      "role": "Developer"
+    },
+    {
+      "name": "Korobitsyn Maksim",
+      "email": "dog.mixer@gmaiol.com",
+      "role": "Developer"
     }
   ],
   "require": {
@@ -20,12 +31,12 @@
       "src/Conditions.php"
     ],
     "psr-4": {
-      "Mindy\\QueryBuilder\\": "src/"
+      "Tsukasa\\QueryBuilder\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Mindy\\Tests\\": "test/"
+      "Tsukasa\\Tests\\": "test/"
     }
   }
 }

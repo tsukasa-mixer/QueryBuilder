@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 01/07/16
- * Time: 12:10
- */
 
-namespace Mindy\QueryBuilder\Q;
+namespace Tsukasa\QueryBuilder\Q;
 
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class QOrNot extends QOr
 {

@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 15:38
- */
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\Interfaces\IAdapter;
-use Mindy\QueryBuilder\Interfaces\ILookupCollection;
-use Mindy\QueryBuilder\Q\Q;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
+use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Q\Q;
 
 class BaseLookupCollection implements ILookupCollection
 {
@@ -40,7 +34,7 @@ class BaseLookupCollection implements ILookupCollection
     {
         switch ($lookup) {
             case 'exact':
-                /** @var $adapter \Mindy\QueryBuilder\BaseAdapter */
+                /** @var $adapter \Tsukasa\QueryBuilder\BaseAdapter */
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
@@ -85,7 +79,7 @@ class BaseLookupCollection implements ILookupCollection
                 return $adapter->quoteColumn($column) . ' BETWEEN ' . $adapter->quoteValue($min) . ' AND ' . $adapter->quoteValue($max);
 
             case 'isnt':
-                /** @var $adapter \Mindy\QueryBuilder\BaseAdapter */
+                /** @var $adapter \Tsukasa\QueryBuilder\BaseAdapter */
                 if (in_array($adapter->getSqlType($value), ['TRUE', 'FALSE', 'NULL'])) {
                     return $adapter->quoteColumn($column) . ' IS NOT ' . $adapter->getSqlType($value);
                 } else {

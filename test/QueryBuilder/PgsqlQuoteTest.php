@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 27/06/16
- * Time: 20:38
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Database\Pgsql\Adapter;
+use Tsukasa\QueryBuilder\Database\Pgsql\Adapter;
 use PDO;
 
 class PgsqlQuoteTest extends BaseTest

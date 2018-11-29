@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 30/06/16
- * Time: 16:07
- */
 
-namespace Mindy\QueryBuilder\Interfaces;
+namespace Tsukasa\QueryBuilder\Interfaces;
 
 interface ISQLGenerator
 {

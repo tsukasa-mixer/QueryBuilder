@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 25/07/16
- * Time: 16:53
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -84,7 +78,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \Mindy\QueryBuilder\BaseAdapter
+     * @return \Tsukasa\QueryBuilder\BaseAdapter
      */
     protected function getAdapter()
     {

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 25/07/16
- * Time: 17:34
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
@@ -13,8 +7,8 @@ use Doctrine\DBAL\DriverManager;
 use Mindy\Helper\Creator;
 use Mindy\Query\Connection;
 use Mindy\Query\PDO;
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 use ReflectionClass;
 
 abstract class BuildSchemaTest extends BaseTest

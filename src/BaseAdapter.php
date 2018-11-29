@@ -1,12 +1,12 @@
 <?php
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use Exception;
-use Mindy\QueryBuilder\Aggregation\Aggregation;
-use Mindy\QueryBuilder\Interfaces\ILookupCollection;
-use Mindy\QueryBuilder\Interfaces\ISQLGenerator;
-use Mindy\QueryBuilder\Q\Q;
-use Mindy\QueryBuilder\Q\QAnd;
+use Tsukasa\QueryBuilder\Aggregation\Aggregation;
+use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
+use Tsukasa\QueryBuilder\Q\Q;
+use Tsukasa\QueryBuilder\Q\QAnd;
 
 abstract class BaseAdapter implements ISQLGenerator
 {

@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 25/07/16
- * Time: 16:40
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Aggregation\Avg;
-use Mindy\QueryBuilder\Aggregation\Count;
-use Mindy\QueryBuilder\Aggregation\Max;
-use Mindy\QueryBuilder\Aggregation\Min;
-use Mindy\QueryBuilder\Aggregation\Sum;
-use Mindy\QueryBuilder\Expression;
-use Mindy\QueryBuilder\LookupBuilder\LookupBuilder;
-use Mindy\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Aggregation\Avg;
+use Tsukasa\QueryBuilder\Aggregation\Count;
+use Tsukasa\QueryBuilder\Aggregation\Max;
+use Tsukasa\QueryBuilder\Aggregation\Min;
+use Tsukasa\QueryBuilder\Aggregation\Sum;
+use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
+use Tsukasa\QueryBuilder\QueryBuilder;
 
 class BuildSelectJoinCallback
 {

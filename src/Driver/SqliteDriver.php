@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 15/09/16
- * Time: 22:07
- */
 
-namespace Mindy\QueryBuilder\Driver;
+namespace Tsukasa\QueryBuilder\Driver;
 
 use Doctrine\DBAL\Driver\PDOSqlite\Driver;
 

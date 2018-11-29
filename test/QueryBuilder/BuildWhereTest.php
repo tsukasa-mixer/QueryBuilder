@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 25/07/16
- * Time: 15:17
- */
 
 namespace Mindy\Tests\QueryBuilder;
 
-use Mindy\QueryBuilder\Expression;
-use Mindy\QueryBuilder\Q\QAnd;
-use Mindy\QueryBuilder\Q\QAndNot;
-use Mindy\QueryBuilder\Q\QOr;
-use Mindy\QueryBuilder\Q\QOrNot;
+use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Q\QAnd;
+use Tsukasa\QueryBuilder\Q\QAndNot;
+use Tsukasa\QueryBuilder\Q\QOr;
+use Tsukasa\QueryBuilder\Q\QOrNot;
 
 class BuildWhereTest extends BaseTest
 {

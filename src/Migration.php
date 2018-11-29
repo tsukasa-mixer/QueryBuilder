@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\QueryBuilder;
+namespace Tsukasa\QueryBuilder;
 
 use function Mindy\app;
 use Mindy\Helper\Traits\Accessors;
@@ -365,7 +365,7 @@ class Migration
     }
 
     /**
-     * @return \Mindy\QueryBuilder\QueryBuilder
+     * @return \Tsukasa\QueryBuilder\QueryBuilder
      */
     protected function getQueryBuilder()
     {

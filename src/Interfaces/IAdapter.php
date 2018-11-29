@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: max
- * Date: 20/06/16
- * Time: 15:27
- */
 
-namespace Mindy\QueryBuilder\Interfaces;
+namespace Tsukasa\QueryBuilder\Interfaces;
 
 interface IAdapter
 {

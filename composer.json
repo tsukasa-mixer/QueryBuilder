@@ -27,9 +27,6 @@
     "phpunit/php-code-coverage": "^4"
   },
   "autoload": {
-    "files": [
-      "src/Conditions.php"
-    ],
     "psr-4": {
       "Tsukasa\\QueryBuilder\\": "src/"
     }

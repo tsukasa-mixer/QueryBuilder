@@ -2,7 +2,6 @@
 
 namespace Tsukasa\QueryBuilder\Exception;
 
-class NotSupportedException extends QBException
-{
+class QBException extends \RuntimeException {
 
 }

@@ -5,6 +5,7 @@ namespace Tsukasa\QueryBuilder;
 use Doctrine\DBAL\Driver\Connection;
 use Exception;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
+use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
@@ -528,7 +529,7 @@ class QueryBuilder
                 $columns = array_map(function($item){ return trim($item);}, explode(',', $columns));
             }
         }
-        
+
         $this->_group = $columns;
         return $this;
     }
@@ -606,7 +607,9 @@ class QueryBuilder
     {
         if (!is_array($condition)) {
             return (string)$condition;
-        } else if (empty($condition)) {
+        }
+
+        if (empty($condition)) {
             return '';
         }
 
@@ -614,9 +617,9 @@ class QueryBuilder
             $operatorRaw = array_shift($condition);
             $operator = strtoupper($operatorRaw);
             return $this->buildAndCondition($operator, $condition, $params);
-        } else {
-            return $this->parseCondition($condition);
         }
+
+        return $this->parseCondition($condition);
     }
 
     public function getJoinAlias($tableName)
@@ -681,9 +684,8 @@ class QueryBuilder
         if (count($parts) === 1) {
             return $parts[0];
         }
-        else {
-            return '(' . implode(') AND (', $parts) . ')';
-        }
+
+        return '(' . implode(') AND (', $parts) . ')';
     }
 
     public function buildAndCondition($operator, $operands, &$params)
@@ -701,9 +703,9 @@ class QueryBuilder
         }
         if (!empty($parts)) {
             return '(' . implode(') ' . $operator . ' (', $parts) . ')';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -859,15 +861,19 @@ class QueryBuilder
     public function toSQL()
     {
         $type = $this->getType();
-        if ($type == self::TYPE_SELECT) {
+        if ($type === self::TYPE_SELECT) {
             return $this->generateSelectSql();
-        } else if ($type == self::TYPE_UPDATE) {
+        }
+
+        if ($type === self::TYPE_UPDATE) {
             return $this->generateUpdateSql();
-        } else if ($type == self::TYPE_DELETE) {
+        }
+
+        if ($type === self::TYPE_DELETE) {
             return $this->generateDeleteSql();
         }
 
-        throw new Exception('Unknown query type');
+        throw new QBException('Unknown query type');
     }
 
     public function buildHaving()
@@ -883,8 +889,7 @@ class QueryBuilder
     public function buildUnion()
     {
         $sql = '';
-        foreach ($this->_union as $part) {
-            list($union, $all) = $part;
+        foreach ($this->_union as  list($union, $all)) {
             $sql .= ' ' . $this->getAdapter()->sqlUnion($union, $all);
         }
 
@@ -1024,9 +1029,9 @@ class QueryBuilder
             strpos($column, 'SELECT') === false
         ) {
             return $tableAlias . '.' . $column;
-        } else {
-            return $column;
         }
+
+        return $column;
     }
 
     protected function hasAliasedField($column)
@@ -1094,10 +1099,10 @@ class QueryBuilder
         $newOrder = $this->getLookupBuilder()->buildJoin($this, $order);
         if ($newOrder === false) {
             return [$order, $direction];
-        } else {
-            list($alias, $column) = $newOrder;
-            return [$alias . '.' . $column, $direction];
         }
+
+        list($alias, $column) = $newOrder;
+        return [$alias . '.' . $column, $direction];
     }
 
     public function getOrder()
@@ -1134,9 +1139,9 @@ class QueryBuilder
                 $temp = explode(' ', $column);
                 if (count($temp) == 2) {
                     return $this->getAdapter()->quoteColumn($temp[0]) . ' ' . $temp[1];
-                } else {
-                    return $this->getAdapter()->quoteColumn($column);
                 }
+
+                return $this->getAdapter()->quoteColumn($column);
             }, $columns);
             $order = implode(', ', $order);
         } else {
@@ -1159,10 +1164,10 @@ class QueryBuilder
 
             if ($newGroup === false) {
                 return $group;
-            } else {
-                list($alias, $column) = $newGroup;
-                return $alias . '.' . $column;
             }
+
+            list($alias, $column) = $newGroup;
+            return $alias . '.' . $column;
         }
 
         return $group;

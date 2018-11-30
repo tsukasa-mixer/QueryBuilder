@@ -960,10 +960,17 @@ class QueryBuilder
     public function makeAliasKey($table, $increment = false)
     {
         if ($increment) {
-            $this->_aliasesCount += 1;
+            ++$this->_aliasesCount;
         }
+
+        $tableName = $this->getAdapter()->getRawTableName($table);
+
+        if (strpos($tableName, '.') !== false) {
+            $tableName = substr($tableName, strpos($tableName, '.'));
+        }
+
         return strtr('{table}_{count}', [
-            '{table}' => $this->getAdapter()->getRawTableName($table),
+            '{table}' => $tableName,
             '{count}' => $this->_aliasesCount + 1
         ]);
     }

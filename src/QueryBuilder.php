@@ -971,7 +971,7 @@ class QueryBuilder
         $tableName = $this->getAdapter()->getRawTableName($table);
 
         if (strpos($tableName, '.') !== false) {
-            $tableName = substr($tableName, strpos($tableName, '.'));
+            $tableName = substr($tableName, strpos($tableName, '.')+1);
         }
 
         return strtr('{table}_{count}', [

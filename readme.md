@@ -6,7 +6,7 @@
 ## Установка
 
 ```
-composer require mindy/query_builder
+composer require tsukasa/query_builder
 ```
 
 Пример использования

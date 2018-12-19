@@ -1,5 +1,6 @@
 [![Latest Stable Version](https://poser.pugx.org/tsukasa/query_builder/v/stable)](https://packagist.org/packages/tuskasa/query_builder)
 [![Total Downloads](https://poser.pugx.org/tsukasa/query_builder/downloads)](https://packagist.org/packages/tuskasa/query_builder)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder?ref=badge_shield)
 
 # API
 
@@ -77,3 +78,7 @@ $qb
 $pdo->query($qb->toSQL())->fetchAll();
 ```
  year, week_day, minute, hour` работают только в режиме `exact`.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder?ref=badge_large)

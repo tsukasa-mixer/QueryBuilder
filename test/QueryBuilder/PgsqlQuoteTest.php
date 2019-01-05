@@ -9,11 +9,11 @@ class PgsqlQuoteTest extends BaseTest
 {
     protected $driver = 'pgsql';
 
-    public function testAutoQuoting()
-    {
-        $sql = 'SELECT `id`, `t.name` FROM `customer` t';
-        $this->assertEquals('SELECT "id", "t"."name" FROM "customer" t', $this->getAdapter()->quoteSql($sql));
-    }
+//    public function testAutoQuoting()
+//    {
+//        $sql = 'SELECT `id`, `t.name` FROM `customer` t';
+//        $this->assertEquals('SELECT "id", "t"."name" FROM "customer" t', $this->getAdapter()->quoteSql($sql));
+//    }
 
     public function testQuoteValue()
     {

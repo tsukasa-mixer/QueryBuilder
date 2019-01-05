@@ -11,7 +11,7 @@ class PgsqlQuoteTest extends BaseTest
 
     public function testAutoQuoting()
     {
-        $sql = 'SELECT [[id]], [[t.name]] FROM {{customer}} t';
+        $sql = 'SELECT `id`, `t.name` FROM `customer` t';
         $this->assertEquals('SELECT "id", "t"."name" FROM "customer" t', $this->getAdapter()->quoteSql($sql));
     }
 
@@ -31,7 +31,6 @@ class PgsqlQuoteTest extends BaseTest
         $this->assertEquals('"schema"."table"', $adapter->quoteTableName('schema.table'));
         $this->assertEquals('"schema"."table"', $adapter->quoteTableName('schema."table"'));
         $this->assertEquals('"schema"."table"', $adapter->quoteTableName('"schema"."table"'));
-        $this->assertEquals('{{table}}', $adapter->quoteTableName('{{table}}'));
         $this->assertEquals('(table)', $adapter->quoteTableName('(table)'));
     }
 
@@ -43,8 +42,6 @@ class PgsqlQuoteTest extends BaseTest
         $this->assertEquals('"table"."column"', $adapter->quoteColumn('table.column'));
         $this->assertEquals('"table"."column"', $adapter->quoteColumn('table."column"'));
         $this->assertEquals('"table"."column"', $adapter->quoteColumn('"table"."column"'));
-        $this->assertEquals('[[column]]', $adapter->quoteColumn('[[column]]'));
-        $this->assertEquals('{{column}}', $adapter->quoteColumn('{{column}}'));
         $this->assertEquals('(column)', $adapter->quoteColumn('(column)'));
     }
 }

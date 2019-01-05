@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 use Tsukasa\QueryBuilder\Expression;
 use Tsukasa\QueryBuilder\Q\QAnd;
@@ -14,9 +14,9 @@ class BuildWhereTest extends BaseTest
     {
         $subQuery = clone $this->getQueryBuilder();
         $subQuery->setTypeSelect()->select(['parent_id'])->from('test')->where([
-            'parent_id' => new Expression('[[id]]')
+            'parent_id' => new Expression('`id`')
         ]);
-        $this->assertSql('SELECT [[parent_id]] FROM [[test]] WHERE ([[parent_id]]=[[id]])', $subQuery->toSQL());
+        $this->assertSql('SELECT `parent_id` FROM `test` WHERE (`parent_id`=`id`)', $subQuery->toSQL());
 
         $subQuery = clone $this->getQueryBuilder();
         $subQuery
@@ -24,8 +24,8 @@ class BuildWhereTest extends BaseTest
             ->select(['parent_id'])
             ->from('test')
             ->setAlias('test_1')
-            ->where(['parent_id' => new Expression('[[test_1]].[[id]]')]);
-        $this->assertSql('SELECT [[test_1]].[[parent_id]] FROM [[test]] AS [[test_1]] WHERE ([[test_1]].[[parent_id]]=[[test_1]].[[id]])', $subQuery->toSQL());
+            ->where(['parent_id' => new Expression('`test_1`.`id`')]);
+        $this->assertSql('SELECT `test_1`.`parent_id` FROM `test` AS `test_1` WHERE (`test_1`.`parent_id`=`test_1`.`id`)', $subQuery->toSQL());
     }
 
     public function testHard()
@@ -36,58 +36,58 @@ class BuildWhereTest extends BaseTest
             ->select(['parent_id'])
             ->from('test')
             ->setAlias('test_1')
-            ->where(['parent_id' => new Expression('[[test_1]].[[id]]')]);
-        $subQuerySql = 'SELECT [[test_1]].[[parent_id]] FROM [[test]] AS [[test_1]] WHERE ([[test_1]].[[parent_id]]=[[test_1]].[[id]])';
+            ->where(['parent_id' => new Expression('`test_1`.`id`')]);
+        $subQuerySql = 'SELECT `test_1`.`parent_id` FROM `test` AS `test_1` WHERE (`test_1`.`parent_id`=`test_1`.`id`)';
         $this->assertSql($subQuerySql, $subQuery->toSQL());
 
         $query = clone $this->getQueryBuilder();
         $query->setTypeSelect()
-            ->select(['id', 'root', 'lft', 'rgt', new Expression('[[test_1]].[[rgt]]-[[test_1]].[[lft]]-1 AS [[move]]')])
+            ->select(['id', 'root', 'lft', 'rgt', new Expression('`test_1`.`rgt`-`test_1`.`lft`-1 AS `move`')])
             ->from('test')
             ->setAlias('test_1')
             ->where(new QAndNot([
-                'lft' => new Expression('[[test_1]].[[rgt]]-1'),
+                'lft' => new Expression('`test_1`.`rgt`-1'),
                 'id__in' => $subQuery
             ]))
             ->order(['rgt']);
 
-        $this->assertSql('SELECT [[test_1]].[[id]], [[test_1]].[[root]], [[test_1]].[[lft]], [[test_1]].[[rgt]], [[test_1]].[[rgt]]-[[test_1]].[[lft]]-1 AS [[move]]', $query->buildSelect());
-        $this->assertSql('SELECT [[test_1]].[[id]], [[test_1]].[[root]], [[test_1]].[[lft]], [[test_1]].[[rgt]], [[test_1]].[[rgt]]-[[test_1]].[[lft]]-1 AS [[move]] FROM [[test]] AS [[test_1]] WHERE (NOT ([[test_1]].[[lft]]=[[test_1]].[[rgt]]-1 AND [[test_1]].[[id]] IN ('
-            . $subQuerySql . '))) ORDER BY [[test_1]].[[rgt]] ASC', $query->toSQL());
+        $this->assertSql('SELECT `test_1`.`id`, `test_1`.`root`, `test_1`.`lft`, `test_1`.`rgt`, `test_1`.`rgt`-`test_1`.`lft`-1 AS `move`', $query->buildSelect());
+        $this->assertSql('SELECT `test_1`.`id`, `test_1`.`root`, `test_1`.`lft`, `test_1`.`rgt`, `test_1`.`rgt`-`test_1`.`lft`-1 AS `move` FROM `test` AS `test_1` WHERE (NOT (`test_1`.`lft`=`test_1`.`rgt`-1 AND `test_1`.`id` IN ('
+            . $subQuerySql . '))) ORDER BY `test_1`.`rgt` ASC', $query->toSQL());
     }
 
     public function testQAnd()
     {
         $qb = $this->getQueryBuilder();
         $qb->where(new QAnd(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE ([[id]]=1 AND [[name]]=@foo@)', $qb->buildWhere());
+        $this->assertSql('WHERE (`id`=1 AND `name`=\'foo\')', $qb->buildWhere());
     }
 
     public function testQAndNotRaw()
     {
         $qb = $this->getQueryBuilder();
-        $qb->where(new QAndNot('[[a]] != 1'));
-        $this->assertSql('WHERE (NOT ([[a]] != 1))', $qb->buildWhere());
+        $qb->where(new QAndNot('`a` != 1'));
+        $this->assertSql('WHERE (NOT (`a` != 1))', $qb->buildWhere());
     }
 
     public function testQOr()
     {
         $qb = $this->getQueryBuilder();
         $qb->where(new QOr(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE ([[id]]=1 OR [[name]]=@foo@)', $qb->buildWhere());
+        $this->assertSql('WHERE (`id`=1 OR `name`=\'foo\')', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->where(new QOr([
             ['id' => 1, 'name' => 'username'], ['id' => 2, 'name' => 'foobar']
         ]));
-        $this->assertSql('WHERE (([[id]]=1 OR [[name]]=@username@) OR ([[id]]=2 OR [[name]]=@foobar@))', $qb->buildWhere());
+        $this->assertSql('WHERE ((`id`=1 OR `name`=\'username\') OR (`id`=2 OR `name`=\'foobar\'))', $qb->buildWhere());
     }
 
     public function testQAndNot()
     {
         $qb = $this->getQueryBuilder();
         $qb->where(new QAndNot(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (NOT ([[id]]=1 AND [[name]]=@foo@))', $qb->buildWhere());
+        $this->assertSql('WHERE (NOT (`id`=1 AND `name`=\'foo\'))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->where(new QAndNot([
@@ -100,27 +100,27 @@ class BuildWhereTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->where(new QOrNot(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (NOT ([[id]]=1 OR [[name]]=@foo@))', $qb->buildWhere());
+        $this->assertSql('WHERE (NOT (`id`=1 OR `name`=\'foo\'))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->where(new QOrNot([
             ['id' => 1], ['id' => 2]
         ]));
-        $this->assertSql('WHERE (NOT (([[id]]=1) OR ([[id]]=2)))', $qb->buildWhere());
+        $this->assertSql('WHERE (NOT ((`id`=1) OR (`id`=2)))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->where(new QOrNot([
             'id__in' => [1, 2, 3],
             'price__gte' => 100
         ]));
-        $this->assertEquals($this->quoteSql('SELECT * WHERE (NOT ([[id]] IN (1, 2, 3) OR [[price]]>=100))'), $qb->toSQL());
+        $this->assertEquals($this->quoteSql('SELECT * WHERE (NOT (`id` IN (1, 2, 3) OR `price`>=100))'), $qb->toSQL());
     }
 
     public function testMixed()
     {
         $qb = $this->getQueryBuilder();
-        $qb->where('[[a]] != 1')->where(['id__in' => [1, 2, 3]])->orWhere(new QAndNot(['id' => 1]));
-        $this->assertSql('SELECT * WHERE ((([[a]] != 1)) AND (([[id]] IN (1, 2, 3)))) OR ((NOT ([[id]]=1)))', $qb->toSQL());
+        $qb->where('`a` != 1')->where(['id__in' => [1, 2, 3]])->orWhere(new QAndNot(['id' => 1]));
+        $this->assertSql('SELECT * WHERE (((`a` != 1)) AND ((`id` IN (1, 2, 3)))) OR ((NOT (`id`=1)))', $qb->toSQL());
     }
 
     public function testWhereMore()
@@ -134,7 +134,7 @@ class BuildWhereTest extends BaseTest
 
         $qb = $this->getQueryBuilder();
         $qb->from('test')->where(['id' => 2])->orWhere(['id' => 1])->where(['id__isnt' => 3]);
-        $this->assertSql('WHERE ((([[id]]=2)) AND (([[id]]!=3))) OR (([[id]]=1))', $qb->buildWhere());
+        $this->assertSql('WHERE (((`id`=2)) AND ((`id`!=3))) OR ((`id`=1))', $qb->buildWhere());
     }
 
     public function testEmpty()
@@ -208,7 +208,7 @@ class BuildWhereTest extends BaseTest
     public function testSubQueryString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->where(['id' => 'SELECT [[id]] FROM [[test]]']);
+        $qb->where(['id' => 'SELECT `id` FROM `test`']);
         $this->assertSql("WHERE (`id`=(SELECT `id` FROM `test`))", $qb->buildWhere());
     }
 
@@ -224,7 +224,7 @@ class BuildWhereTest extends BaseTest
     public function testString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->where('[[id]]=1');
+        $qb->where('`id`=1');
         $this->assertSql("WHERE (`id`=1)", $qb->buildWhere());
     }
 

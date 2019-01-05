@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 abstract class SchemaTest extends BaseTest
 {
@@ -23,8 +23,8 @@ abstract class SchemaTest extends BaseTest
     public function testDistinct()
     {
         $qb = $this->getQueryBuilder();
-        $this->assertSql('SELECT * FROM [[profile]]', $qb->from('profile')->toSQL());
-        $this->assertSql('SELECT DISTINCT [[description]] FROM [[profile]]', $qb->select('description', true)->from('profile')->toSQL());
+        $this->assertSql('SELECT * FROM `profile`', $qb->from('profile')->toSQL());
+        $this->assertSql('SELECT DISTINCT `description` FROM `profile`', $qb->select('description')->setOptions('DISTINCT')->from('profile')->toSQL());
     }
 
     public function testGetDateTime()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;

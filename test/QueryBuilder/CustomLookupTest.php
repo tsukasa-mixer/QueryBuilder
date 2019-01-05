@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 use Exception;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;

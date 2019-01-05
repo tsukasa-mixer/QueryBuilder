@@ -1,15 +1,16 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 use Exception;
+use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
 use Tsukasa\QueryBuilder\QueryBuilderFactory;
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 
-class CallbackTestCallback
+class CallbackTestCallback extends AbstractCallback
 {
     public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
@@ -36,7 +37,7 @@ class CallbackTestCallback
     }
 }
 
-class CallbackTestTwoCallback
+class CallbackTestTwoCallback extends AbstractCallback
 {
     public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {

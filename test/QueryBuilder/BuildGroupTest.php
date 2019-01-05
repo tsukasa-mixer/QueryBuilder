@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 class BuildGroupTest extends BaseTest
 {

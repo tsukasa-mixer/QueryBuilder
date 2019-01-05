@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 use PDO;
@@ -15,11 +15,11 @@ class SqliteQuoteTest extends BaseTest
         parent::setUp();
     }
 
-    public function testAutoQuoting()
-    {
-        $sql = 'SELECT [[id]], [[t.name]] FROM {{customer}} t';
-        $this->assertEquals("SELECT `id`, `t`.`name` FROM `customer` t", $this->getAdapter()->quoteSql($sql));
-    }
+//    public function testAutoQuoting()
+//    {
+//        $sql = 'SELECT `id`, `t.name` FROM `customer` t';
+//        $this->assertEquals("SELECT `id`, `t`.`name` FROM `customer` t", $this->getAdapter()->quoteSql($sql));
+//    }
     
     public function testQuoteValue()
     {
@@ -34,7 +34,7 @@ class SqliteQuoteTest extends BaseTest
         $adapter = $this->getAdapter();
         $this->assertEquals("`table`", $adapter->quoteTableName('table'));
         $this->assertEquals("`schema`.`table`", $adapter->quoteTableName('schema.table'));
-        $this->assertEquals('{{table}}', $adapter->quoteTableName('{{table}}'));
+        $this->assertEquals('`table`', $adapter->quoteTableName('`table`'));
         $this->assertEquals('(table)', $adapter->quoteTableName('(table)'));
     }
 
@@ -43,8 +43,8 @@ class SqliteQuoteTest extends BaseTest
         $adapter = $this->getAdapter();
         $this->assertEquals('`column`', $adapter->quoteColumn('column'));
         $this->assertEquals("`table`.`column`", $adapter->quoteColumn('table.column'));
-        $this->assertEquals('[[column]]', $adapter->quoteColumn('[[column]]'));
-        $this->assertEquals('{{column}}', $adapter->quoteColumn('{{column}}'));
+        $this->assertEquals('`column`', $adapter->quoteColumn('`column`'));
+        $this->assertEquals('`column`', $adapter->quoteColumn('`column`'));
         $this->assertEquals('(column)', $adapter->quoteColumn('(column)'));
     }
 }

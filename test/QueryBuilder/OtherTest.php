@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 class OtherTest extends BaseTest
 {
@@ -18,14 +18,14 @@ class OtherTest extends BaseTest
         $qb = $this->getQueryBuilder();
         $qb->select('t.*')->from(['t' => 'comment'])->group(['t.id'])->order(['t.id']);
         $this->assertSql(
-            'SELECT [[t]].* FROM [[comment]] AS [[t]] GROUP BY [[t]].[[id]] ORDER BY [[t]].[[id]] ASC',
+            'SELECT `t`.* FROM `comment` AS `t` GROUP BY `t`.`id` ORDER BY `t`.`id` ASC',
             $qb->toSQL()
         );
     }
 
     public function testClone()
     {
-        $sql = $this->getAdapter()->quoteSql('SELECT [[a]], [[b]], [[c]] FROM [[test]]');
+        $sql = $this->getAdapter()->quoteSql('SELECT `a`, `b`, `c` FROM `test`');
 
         $qb = $this->getQueryBuilder();
         $qb->select('a, b, c')->from('test');
@@ -45,11 +45,11 @@ class OtherTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $this->assertEquals(
-            $this->quoteSql('INSERT INTO [[test]] ([[name]]) VALUES (@qwe@)'),
+            $this->quoteSql('INSERT INTO `test` (`name`) VALUES (\'qwe\')'),
             $qb->insert('test', [['name' => 'qwe']])
         );
         $this->assertEquals(
-            $this->quoteSql('INSERT INTO [[test]] ([[name]]) VALUES (@foo@), (@bar@)'),
+            $this->quoteSql('INSERT INTO `test` (`name`) VALUES (\'foo\'), (\'bar\')'),
             $qb->insert('test', [['name' => 'foo'], ['name' => 'bar']])
         );
     }
@@ -58,7 +58,7 @@ class OtherTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $this->assertEquals(
-            $this->quoteSql('UPDATE [[test]] SET [[name]]=@bar@ WHERE ([[name]]=@foo@)'),
+            $this->quoteSql('UPDATE `test` SET `name`=\'bar\' WHERE (`name`=\'foo\')'),
             $qb->setTypeUpdate()->update('test', ['name' => 'bar'])->where(['name' => 'foo'])->toSQL()
         );
     }
@@ -67,7 +67,7 @@ class OtherTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $this->assertEquals(
-            $this->quoteSql('DELETE FROM [[test]] WHERE ([[name]]=@qwe@)'),
+            $this->quoteSql('DELETE FROM `test` WHERE (`name`=\'qwe\')'),
             $qb->setTypeDelete()->where(['name' => 'qwe'])->from('test')->toSQL()
         );
     }

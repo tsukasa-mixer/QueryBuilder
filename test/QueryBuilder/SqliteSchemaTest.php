@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 class SqliteSchemaTest extends SchemaTest
 {
@@ -9,6 +9,6 @@ class SqliteSchemaTest extends SchemaTest
     public function testLimitOffset()
     {
         $sql = $this->getQueryBuilder()->from('profile')->offset(1)->toSQL();
-        $this->assertEquals($this->quoteSql('SELECT * FROM [[profile]] LIMIT 9223372036854775807 OFFSET 1'), $sql);
+        $this->assertEquals($this->quoteSql('SELECT * FROM `profile` LIMIT 9223372036854775807 OFFSET 1'), $sql);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindy\Tests\QueryBuilder;
+namespace Tsukasa\Tests\QueryBuilder;
 
 class BuildFromTest extends BaseTest
 {
@@ -31,7 +31,7 @@ class BuildFromTest extends BaseTest
 
     public function testSubSelectString()
     {
-        $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name` = 'foo')) AS `t`";
+        $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name`='foo')) AS `t`";
 
         $qbSub = $this->getQueryBuilder();
         $qbSub->from(['comment'])->select('user_id')->where(['name' => 'foo']);
@@ -42,7 +42,7 @@ class BuildFromTest extends BaseTest
 
     public function testSubSelect()
     {
-        $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name` = 'foo')) AS `t`";
+        $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name`='foo')) AS `t`";
 
         $qbSub = $this->getQueryBuilder();
         $qbSub->from(['comment'])->select('user_id')->where(['name' => 'foo']);

@@ -3,6 +3,10 @@
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
 use Exception;
+use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
+use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
+use Tsukasa\QueryBuilder\Callbacks\AbstractJoinCallback;
+use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
@@ -19,17 +23,17 @@ abstract class Base implements ILookupBuilder
      */
     protected $separator = '__';
     /**
-     * @var callable|null
+     * @var AbstractCallback|null
      */
-    protected $callback = null;
+    protected $callback;
     /**
-     * @var callable|null
+     * @var AbstractJoinCallback|null
      */
-    protected $joinCallback = null;
+    protected $joinCallback;
     /**
-     * @var null|\Closure
+     * @var AbstractColumnCallback|null
      */
-    protected $fetchColumnCallback = null;
+    protected $fetchColumnCallback;
     /**
      * @var ILookupCollection[]
      */
@@ -38,9 +42,7 @@ abstract class Base implements ILookupBuilder
     public function __clone()
     {
         foreach ($this as $key => $val) {
-            if (is_object($val) || is_array($val)) {
-                $this->{$key} = unserialize(serialize($val));
-            }
+            $this->{$key} = clone $val;
         }
     }
 
@@ -92,27 +94,50 @@ abstract class Base implements ILookupBuilder
 
     public function fetchColumnName($column)
     {
-        if ($this->fetchColumnCallback === null) {
-            return $column;
+        if ($this->fetchColumnCallback) {
+            if ($this->fetchColumnCallback instanceof \Closure) {
+                $call = $this->fetchColumnCallback;
+                return $call($column);
+            }
+
+            if ($this->fetchColumnCallback instanceof AbstractColumnCallback) {
+                $this->fetchColumnCallback->run($column);
+            }
         }
 
-        return $this->fetchColumnCallback->run($column);
+        return $column;
     }
 
     public function runCallback(QueryBuilder $queryBuilder, $lookupNodes, $value)
     {
-        if ($this->callback === null) {
-            return null;
+        if ($this->callback) {
+            if ($this->callback instanceof \Closure) {
+                $call = $this->callback;
+                return $call($queryBuilder, $this, $lookupNodes, $value);
+            }
+
+            if ($this->callback instanceof AbstractCallback) {
+                return $this->callback->run($queryBuilder, $this, $lookupNodes, $value);
+            }
         }
-        return $this->callback->run($queryBuilder, $this, $lookupNodes, $value);
+
+        return null;
     }
 
     public function runJoinCallback(QueryBuilder $queryBuilder, $lookupNodes)
     {
-        if ($this->joinCallback === null) {
-            return null;
+        if ($this->joinCallback) {
+            if ($this->joinCallback instanceof \Closure) {
+                $call = $this->joinCallback->bindTo($this, $this);
+                return $call($queryBuilder, $this, $lookupNodes);
+            }
+
+            if ($this->joinCallback instanceof AbstractJoinCallback) {
+                return $this->joinCallback->run($queryBuilder, $this, $lookupNodes);
+            }
         }
-        return $this->joinCallback->run($queryBuilder, $this, $lookupNodes);
+
+        return null;
     }
 
     public function getSeparator()
@@ -141,11 +166,11 @@ abstract class Base implements ILookupBuilder
 
 
     /**
+     * @param IAdapter $adapter
      * @param $lookup
      * @param $column
      * @param $value
      * @return string
-     * @throws Exception
      * @exception \Exception
      */
     public function runLookup(IAdapter $adapter, $lookup, $column, $value)
@@ -155,7 +180,7 @@ abstract class Base implements ILookupBuilder
                 return $collection->process($adapter, $lookup, $column, $value);
             }
         }
-        throw new Exception('Unknown lookup: ' . $lookup . ', column: ' . $column . ', value: ' . (is_array($value) ? print_r($value, true) : $value));
+        throw new QBException('Unknown lookup: ' . $lookup . ', column: ' . $column . ', value: ' . (is_array($value) ? print_r($value, true) : $value));
     }
 
     abstract public function parse(QueryBuilder $queryBuilder, array $where);

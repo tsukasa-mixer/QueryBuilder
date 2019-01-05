@@ -170,10 +170,16 @@ abstract class BaseAdapter implements ISQLGenerator
         return strpos($name, "'") !== false ? $name : "'" . $name . "'";
     }
 
+    /**
+     * @param $sql
+     * @return mixed
+     *
+     * @deprecated
+     */
     public function quoteSql($sql)
     {
-        $tablePrefix = $this->tablePrefix;
-
+//        $tablePrefix = $this->tablePrefix;
+//
 //        if (preg_match('/\\{\\{(%?[\w\-\. ]+%?)\\}\\}|\\[\\[([\w\-\. ]+)\\]\\]|\\[\\[([\w\-\. ]+)\\]\\][\s]*=[\s]*\\@([\w\-\. \/\%\:]+)\\@/', $sql))
 //        {
 //            return preg_replace_callback('/(\\{\\{(%?[\w\-\. ]+%?)\\}\\}|\\[\\[([\w\-\. ]+)\\]\\])|\\@([\w\-\. \/\%\:]+)\\@/',
@@ -309,6 +315,10 @@ abstract class BaseAdapter implements ISQLGenerator
             $options = '';
         }
 
+        if ($options) {
+            $options = " {$options} ";
+        }
+
         if (isset($rows[0]) && is_array($rows)) {
             $columns = array_map(function ($column) {
                 return $this->quoteColumn($column);
@@ -336,7 +346,7 @@ abstract class BaseAdapter implements ISQLGenerator
                 $values[] = '(' . implode(', ', $record) . ')';
             }
 
-            $sql = 'INSERT '. $options .' INTO ' . $this->quoteTableName($tableName) . ' (' . implode(', ', $columns) . ') VALUES ' . implode(', ', $values);
+            $sql = 'INSERT'. $options .' INTO ' . $this->quoteTableName($tableName) . ' (' . implode(', ', $columns) . ') VALUES ' . implode(', ', $values);
 
             return $this->quoteSql($sql);
         } else {
@@ -360,7 +370,7 @@ abstract class BaseAdapter implements ISQLGenerator
                 return $value;
             }, $rows);
 
-            $sql = 'INSERT '. $options .' INTO ' . $this->quoteTableName($tableName) . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $values) . ')';
+            $sql = 'INSERT'. $options .' INTO ' . $this->quoteTableName($tableName) . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $values) . ')';
 
             return $this->quoteSql($sql);
         }
@@ -387,8 +397,11 @@ abstract class BaseAdapter implements ISQLGenerator
             }
             $parts[] = $this->quoteColumn($column) . '=' . $val;
         }
+        if ($options) {
+            $options = " {$options} ";
+        }
 
-        return 'UPDATE '. $options . ' ' . $this->quoteTableName($tableName) . ' SET ' . implode(', ', $parts);
+        return 'UPDATE '. $options . $this->quoteTableName($tableName) . ' SET ' . implode(', ', $parts);
     }
 
     /**
@@ -402,10 +415,11 @@ abstract class BaseAdapter implements ISQLGenerator
      * @param $join
      * @param $having
      * @param $union
-     * @param $distinct
+     * @param string $options
      * @return string
+     * @throws Exception
      */
-    public function generateSelectSQL($select, $from, $where, $order, $group, $limit, $offset, $join, $having, $union, $distinct, $options = '')
+    public function generateSelectSQL($select, $from, $where, $order, $group, $limit, $offset, $join, $having, $union, $options = '')
     {
         if (empty($order)) {
             $orderColumns = [];
@@ -419,7 +433,7 @@ abstract class BaseAdapter implements ISQLGenerator
         $unionSql = $this->sqlUnion($union);
 
         return strtr('{select}{from}{join}{where}{group}{having}{order}{limit_offset}{union}', [
-            '{select}' => $this->sqlSelect($select, $distinct, $options),
+            '{select}' => $this->sqlSelect($select, $options),
             '{from}' => $this->sqlFrom($from),
             '{where}' => $where,
             '{group}' => $this->sqlGroupBy($group),
@@ -715,7 +729,8 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @param $unions
+     * @param QueryBuilder|string $union
+     * @param bool $all
      * @return string
      */
     public function sqlUnion($union, $all = false)
@@ -788,11 +803,11 @@ abstract class BaseAdapter implements ISQLGenerator
             $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
             $quotedColumns = array_map(function ($column) {
                 $temp = explode(' ', $column);
-                if (count($temp) == 2) {
+                if (count($temp) === 2) {
                     return $this->quoteColumn($temp[0]) . ' ' . $temp[1];
-                } else {
-                    return $this->quoteColumn($column);
                 }
+
+                return $this->quoteColumn($column);
             }, $columns);
             return implode(', ', $quotedColumns);
         }
@@ -825,14 +840,10 @@ abstract class BaseAdapter implements ISQLGenerator
      * @return string
      * @throws \Exception
      */
-    public function sqlSelect($columns, $distinct = null, $options = '')
+    public function sqlSelect($columns, $options = '')
     {
         $selectSql = 'SELECT ';
-        
-        if ($distinct) {
-            $selectSql .= 'DISTINCT ';
-        }
-        
+
         if ($options) {
             $selectSql .= $options . ' ';
         }
@@ -855,7 +866,7 @@ abstract class BaseAdapter implements ISQLGenerator
                     $subQuery = $this->quoteSql($expr->toSQL());
                 }
 
-                $value = "({$this->quoteColumn($subQuery)})";
+                $value = $this->quoteColumn($subQuery);
 
                 if (!is_numeric($column)) {
                     $value .= ' AS ' . $this->quoteColumn($column);

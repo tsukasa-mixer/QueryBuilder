@@ -2,10 +2,9 @@
 
 namespace Tsukasa\QueryBuilder\Aggregation;
 
-use Tsukasa\QueryBuilder\Expression;
 use Tsukasa\QueryBuilder\QueryBuilder;
 
-class Aggregation extends Expression
+abstract class Aggregation
 {
     protected $alias;
 
@@ -15,7 +14,22 @@ class Aggregation extends Expression
 
     protected $fieldsSql = '';
 
-    public function setFieldsSql($sql)
+    /** @var QueryBuilder */
+    protected $qb;
+
+    public function setQb(QueryBuilder $qb)
+    {
+        $this->qb = $qb;
+
+        return $this;
+    }
+
+    public function getQb()
+    {
+        return $this->qb;
+    }
+
+    public function setFieldSql($sql)
     {
         $this->fieldsSql = $sql;
         return $this;
@@ -27,46 +41,37 @@ class Aggregation extends Expression
         return $this;
     }
 
-    public function quoteColumn(QueryBuilder $qb)
+    protected function quoteColumn($column)
     {
-        $adapter = $qb->getAdapter();
+        return $this->getQb()->getAdapter()->quoteColumn($column);
+    }
 
-        return [$adapter->quoteColumn($this->tableAlias), $adapter->quoteColumn($this->alias)];
+    /**
+     * @return string
+     */
+    abstract protected function expressionTemplate();
+
+    public function expression()
+    {
+        return strtr($this->expressionTemplate(), [
+            '{field}' => $this->quoteColumn($this->fieldsSql)
+        ]);
     }
 
     public function toSQL(QueryBuilder $qb = null)
     {
-        $sql = '';
+        if ($qb) { $this->qb = $qb; }
 
-        if ($this->tableAlias) {
-            $ta = $this->tableAlias;
-
-            if ($qb) {
-                list($ta) = $this->quoteColumn($qb);
-            }
-
-            $sql = $ta . '.';
-        }
-
-        return $sql . $this->fieldsSql;
+        return $this->expression() . (empty($this->alias) ? '' : ' AS ' .  $this->quoteColumn($this->getAlias()));
     }
 
-    public function getFields()
+    public function getField()
     {
         return $this->fields;
     }
 
     public function getAlias()
     {
-        return $this->alias;
-    }
-    
-    public function getQuotedAlias(QueryBuilder $qb = null)
-    {
-        if ($qb) {
-            return $qb->getAdapter()->quoteColumn($this->alias);
-        }
-
         return $this->alias;
     }
 

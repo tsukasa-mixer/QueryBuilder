@@ -2,7 +2,7 @@
 
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
-use Exception;
+use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupBuilder extends Base
@@ -11,28 +11,28 @@ class LookupBuilder extends Base
     {
         if (substr_count($rawLookup, $this->separator) > 1) {
             if (empty($this->callback)) {
-                throw new Exception('Unknown lookup: ' . $rawLookup);
-            } else {
-                return $this->runCallback($queryBuilder, explode($this->separator, $rawLookup), $value);
+                throw new \Exception('Unknown lookup: ' . $rawLookup);
             }
+
+            return $this->runCallback($queryBuilder, explode($this->separator, $rawLookup), $value);
         }
 
-        if (substr_count($rawLookup, $this->separator) == 0) {
+        if (substr_count($rawLookup, $this->separator) === 0) {
             $rawLookup = $this->fetchColumnName($rawLookup);
             return [$this->default, $rawLookup, $value];
-        } else {
-            $lookupNodes = explode($this->separator, $rawLookup);
-            if ($this->hasLookup(end($lookupNodes)) && substr_count($rawLookup, $this->separator) == 1) {
-                list($column, $lookup) = explode($this->separator, $rawLookup);
-                if ($this->hasLookup($lookup) == false) {
-                    throw new Exception('Unknown lookup:' . $lookup);
-                }
-                $column = $this->fetchColumnName($column);
-                return [$lookup, $column, $value];
-            } else {
-                return $this->runCallback($queryBuilder, $lookupNodes, $value);
-            }
         }
+
+        $lookupNodes = explode($this->separator, $rawLookup);
+        if ($this->hasLookup(end($lookupNodes)) && substr_count($rawLookup, $this->separator) === 1) {
+            list($column, $lookup) = explode($this->separator, $rawLookup);
+            if ($this->hasLookup($lookup) === false) {
+                throw new QBException('Unknown lookup:' . $lookup);
+            }
+            $column = $this->fetchColumnName($column);
+            return [$lookup, $column, $value];
+        }
+
+        return $this->runCallback($queryBuilder, $lookupNodes, $value);
     }
 
     public function buildJoin(QueryBuilder $queryBuilder, $lookup)

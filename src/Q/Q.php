@@ -138,15 +138,17 @@ abstract class Q
         if ($operator === null) {
             $operator = $this->getOperator();
         }
-        
+
         if (is_string($part)) {
             return $part;
-        } else if (is_array($part)) {
+        }
+
+        if (is_array($part)) {
             $sql = [];
             foreach ($part as $key => $value) {
                 if ($part instanceof QueryBuilder) {
                     $sql[] = $part->toSQL();
-                } else if ($value instanceof Q) {
+                } else if ($value instanceof self) {
                     $sql[] = '(' . $this->parsePart($queryBuilder, $value) . ')';
                 } else if (is_numeric($key) && is_array($value)) {
                     $sql[] = '(' . $this->parsePart($queryBuilder, $value) . ')';
@@ -159,17 +161,23 @@ abstract class Q
                 }
             }
             return implode(' ' . $operator . ' ', $sql);
-        } else if ($part instanceof Expression) {
+        }
+
+        if ($part instanceof Expression) {
             return $this->adapter->quoteSql($part->toSQL());
-        } else if ($part instanceof Q) {
+        }
+
+        if ($part instanceof self) {
             $part->setLookupBuilder($this->lookupBuilder);
             $part->setAdapter($this->adapter);
             $part->setTableAlias($this->_tableAlias);
             return $part->toSQL($queryBuilder);
-        } else if ($part instanceof QueryBuilder) {
-            return $part->toSQL();
-        } else {
-            throw new Exception("Unknown sql part type");
         }
+
+        if ($part instanceof QueryBuilder) {
+            return $part->toSQL();
+        }
+
+        throw new \Exception("Unknown sql part type");
     }
 }

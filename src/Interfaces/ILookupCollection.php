@@ -11,6 +11,7 @@ interface ILookupCollection
     public function has($lookup);
 
     /**
+     * @param IAdapter $adapter
      * @param $lookup
      * @param $column
      * @param $value

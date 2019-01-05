@@ -24,7 +24,7 @@ class BaseLookupCollection implements ILookupCollection
     }
 
     /**
-     * @param IAdapter $adapter
+     * @param IAdapter|BaseAdapter $adapter
      * @param $lookup
      * @param $column
      * @param $value
@@ -34,7 +34,6 @@ class BaseLookupCollection implements ILookupCollection
     {
         switch ($lookup) {
             case 'exact':
-                /** @var $adapter \Tsukasa\QueryBuilder\BaseAdapter */
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
@@ -48,43 +47,42 @@ class BaseLookupCollection implements ILookupCollection
                 } else {
                     $sqlValue = $adapter->quoteValue($value);
                 }
-                return $adapter->quoteColumn($column) . ' = ' . $sqlValue;
+                return $adapter->quoteColumn($column) . '=' . $sqlValue;
 
             case 'gte':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
-                return $adapter->quoteColumn($column) . ' >= ' . $adapter->quoteValue($value);
+                return $adapter->quoteColumn($column) . '>=' . $adapter->quoteValue($value);
 
             case 'gt':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
-                return $adapter->quoteColumn($column) . ' > ' . $adapter->quoteValue($value);
+                return $adapter->quoteColumn($column) . '>' . $adapter->quoteValue($value);
 
             case 'lte':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
-                return $adapter->quoteColumn($column) . ' <= ' . $adapter->quoteValue($value);
+                return $adapter->quoteColumn($column) . '<=' . $adapter->quoteValue($value);
 
             case 'lt':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
                 }
-                return $adapter->quoteColumn($column) . ' < ' . $adapter->quoteValue($value);
+                return $adapter->quoteColumn($column) . '<' . $adapter->quoteValue($value);
 
             case 'range':
                 list($min, $max) = $value;
                 return $adapter->quoteColumn($column) . ' BETWEEN ' . $adapter->quoteValue($min) . ' AND ' . $adapter->quoteValue($max);
 
             case 'isnt':
-                /** @var $adapter \Tsukasa\QueryBuilder\BaseAdapter */
                 if (in_array($adapter->getSqlType($value), ['TRUE', 'FALSE', 'NULL'])) {
                     return $adapter->quoteColumn($column) . ' IS NOT ' . $adapter->getSqlType($value);
-                } else {
-                    return $adapter->quoteColumn($column) . ' != ' . $adapter->quoteValue($value);
                 }
+
+                return $adapter->quoteColumn($column) . '!=' . $adapter->quoteValue($value);
 
             case 'isnull':
                 return $adapter->quoteColumn($column) . ' ' . ((bool)$value ? 'IS NULL' : 'IS NOT NULL');

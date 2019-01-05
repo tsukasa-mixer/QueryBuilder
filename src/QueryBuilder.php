@@ -3,9 +3,9 @@
 namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\Driver\Connection;
-use Exception;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
 use Tsukasa\QueryBuilder\Exception\QBException;
+use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
@@ -143,26 +143,30 @@ class QueryBuilder
 
     /**
      * @param Connection $connection
+     * @param BaseAdapter|null $adapter
+     * @param LookupBuilder|null $lookupBuilder
      * @return QueryBuilder
-     * @throws Exception
      */
-    public static function getInstance(Connection $connection)
+    public static function getInstance(Connection $connection, $adapter = null, $lookupBuilder = null)
     {
-        $driver = $connection->getDriver();
-        switch ($driver->getName()) {
-            case 'pdo_mysql':
-                $adapter = new MysqlAdapter($connection);
-                break;
-            case 'pdo_sqlite':
-                $adapter = new SqliteAdapter($connection);
-                break;
-            case 'pdo_pgsql':
-                $adapter = new PgsqlAdapter($connection);
-                break;
-            default:
-                throw new Exception('Unknown driver');
+        if ($adapter === null) {
+            $driver = $connection->getDriver();
+            switch ($driver->getName()) {
+                case 'pdo_mysql':
+                    $adapter = new MysqlAdapter($connection);
+                    break;
+                case 'pdo_sqlite':
+                    $adapter = new SqliteAdapter($connection);
+                    break;
+                case 'pdo_pgsql':
+                    $adapter = new PgsqlAdapter($connection);
+                    break;
+                default:
+                    throw new QBException('Unknown driver');
+            }
         }
-        $lookupBuilder = new LookupBuilder();
+
+        $lookupBuilder = $lookupBuilder ?: new LookupBuilder();
         $lookupBuilder->addLookupCollection($adapter->getLookupCollection());
         return new QueryBuilder($connection, $adapter, $lookupBuilder);
     }
@@ -232,12 +236,6 @@ class QueryBuilder
         return $this;
     }
 
-    public function distinct($distinct)
-    {
-        $this->_distinct = $distinct;
-        return $this;
-    }
-
     /**
      * @param Aggregation $aggregation
      * @param string $columnAlias
@@ -246,26 +244,26 @@ class QueryBuilder
     protected function buildSelectFromAggregation(Aggregation $aggregation)
     {
         $tableAlias = $this->getAlias();
-        $rawColumns = $aggregation->getFields();
-        $newSelect = $this->getLookupBuilder()->buildJoin($this, $rawColumns);
+        $rawColumn = $aggregation->getField();
+        $newSelect = $this->getLookupBuilder()->buildJoin($this, $rawColumn);
         if ($newSelect === false) {
-            if (empty($tableAlias) || $rawColumns === '*') {
-                $columns = $rawColumns;
+            if (empty($tableAlias) || $rawColumn === '*') {
+                $columns = $rawColumn;
             }
-            elseif (strpos($rawColumns, '.') !== false) {
-                $columns = $rawColumns;
+            elseif (strpos($rawColumn, '.') !== false) {
+                $columns = $rawColumn;
             }
             else {
-                $columns = $tableAlias . '.' . $rawColumns;
+                $columns = $tableAlias . '.' . $rawColumn;
             }
         } else {
             list($alias, $joinColumn) = $newSelect;
             $columns = $alias . '.' . $joinColumn;
         }
         $fieldsSql = $this->getAdapter()->buildColumns($columns);
-        $aggregation->setFieldsSql($fieldsSql);
+        $aggregation->setFieldSql($fieldsSql);
 
-        return $this->getAdapter()->quoteSql($aggregation->toSQL($this));
+        return $this->getAdapter()->quoteSql($aggregation->setQb($this)->toSQL());
     }
 
     /**
@@ -277,7 +275,7 @@ class QueryBuilder
         if (!is_array($columns)) {
             if ($columns instanceof Aggregation) {
                 $columns->setFieldsSql($this->buildColumns($columns->getFields()));
-                return $this->quoteSql($columns->toSQL($this));
+                return $this->quoteSql($columns->setQb($this)->toSQL());
             } else if (strpos($columns, '(') !== false) {
                 return $this->quoteSql($columns);
             } else {
@@ -327,15 +325,11 @@ class QueryBuilder
         } else if (is_string($this->_select)) {
             $select = $this->addColumnAlias($this->_select);
         }
-        return $this->getAdapter()->sqlSelect($select, $this->_distinct, $this->_queryOptions);
+        return $this->getAdapter()->sqlSelect($select, $this->_queryOptions);
     }
 
-    public function select($select, $distinct = null)
+    public function select($select)
     {
-        if ($distinct !== null) {
-            $this->distinct($distinct);
-        }
-
         if (empty($select)) {
             $this->_select = [];
             return $this;
@@ -376,6 +370,8 @@ class QueryBuilder
      * @param $select array|string columns
      * @param $distinct array|string columns
      * @return $this
+     *
+     * @deprecated
      */
     public function selectOld($select, $distinct = null)
     {
@@ -407,7 +403,6 @@ class QueryBuilder
                     $newSelect = $builder->buildJoin($this, $partSelect);
                     if ($newSelect === false) {
                         $columns[$columnAlias] = empty($tableAlias) ? $partSelect : $tableAlias . '.' . $partSelect;
-                        var_dump(empty($tableAlias) ? $partSelect : $tableAlias . '.' . $partSelect);
                     } else {
                         list($alias, $joinColumn) = $newSelect;
                         $columns[$columnAlias] = $alias . '.' . $joinColumn . ' AS ' . $partSelect;
@@ -479,7 +474,7 @@ class QueryBuilder
     }
 
     /**
-     * @return BaseAdapter|ISQLGenerator
+     * @return BaseAdapter|IAdapter
      */
     public function getAdapter()
     {
@@ -492,16 +487,20 @@ class QueryBuilder
      * @param array $on link columns
      * @param string $alias string
      * @return $this
-     * @throws Exception
+     * @throws QBException
      */
-    public function join($joinType, $tableName = '', array $on = [], $alias = '')
+    public function join($joinType, $tableName, array $on = [], $alias = null)
     {
         if (is_string($joinType) && empty($tableName)) {
             $this->_join[] = $this->getAdapter()->quoteSql($joinType);
         } else if ($tableName instanceof QueryBuilder) {
             $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
         } else {
-            $this->_join[$alias] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
+            $join = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
+            if (!$alias) {
+                $alias = count($this->_join);
+            }
+            $this->_join[$alias] = $join;
             $this->_joinAlias[$tableName][] = $alias;
         }
         return $this;
@@ -519,15 +518,13 @@ class QueryBuilder
     }
 
     /**
-     * @param array $columns columns
+     * @param array|string $columns columns
      * @return $this
      */
-    public function group($columns)
+    public function group( $columns)
     {
-        if ($columns) {
-            if (is_string($columns)) {
-                $columns = array_map(function($item){ return trim($item);}, explode(',', $columns));
-            }
+        if ($columns && is_string($columns)) {
+            $columns = array_map('trim', explode(',', $columns));
         }
 
         $this->_group = $columns;
@@ -589,7 +586,7 @@ class QueryBuilder
 
     public function raw($sql)
     {
-        return $this->getAdapter()->quoteSql($sql);
+        return $sql;
     }
 
     public function getAlias()
@@ -645,6 +642,7 @@ class QueryBuilder
             $parts[] = $this->getAdapter()->quoteSql($condition->toSQL());
         }
         else if ($condition instanceof Q) {
+            //@TODO:FIX ME ALL
             $condition->setLookupBuilder($this->getLookupBuilder());
             $condition->setAdapter($this->getAdapter());
             $condition->setTableAlias($tableAlias);
@@ -656,21 +654,25 @@ class QueryBuilder
         else if (is_array($condition)) {
             foreach ($condition as $key => $value)
             {
-                if (is_numeric($key) && ($value instanceof Expression)) {
-                    $parts[] = $this->parseCondition($value);
-                }
-                else if (is_numeric($key) && ($value instanceof QueryBuilder)) {
-                    $parts[] = $this->parseCondition($value);
-                }
-                else if ($value instanceof Q) {
-                    $parts[] = $this->parseCondition($value);
-                }
-                else {
+                if (is_numeric($key)) {
+                    if ($value instanceof Expression) {
+                        $parts[] = $this->parseCondition($value);
+                    }
+                    elseif ($value instanceof QueryBuilder) {
+                        $parts[] = $this->parseCondition($value);
+                    }
+                    else if ($value instanceof Q) {
+                        $parts[] = $this->parseCondition($value);
+                    }
+                    else if (is_string($condition)) {
+                        $parts[] = $condition;
+                    }
+                } else {
                     $value = $this->getAdapter()->prepareValue($value);
 
                     list($lookup, $column, $lookupValue) = $this->lookupBuilder->parseLookup($this, $key, $value);
                     $column = $this->getLookupBuilder()->fetchColumnName($column);
-                    if (empty($tableAlias) === false && strpos($column, '.') === false) {
+                    if (!empty($tableAlias) && strpos($column, '.') === false) {
                         $column = $tableAlias . '.' . $column;
                     }
                     $parts[] = $this->lookupBuilder->runLookup($this->getAdapter(), $lookup, $column, $lookupValue);
@@ -835,9 +837,15 @@ class QueryBuilder
 
     public function generateDeleteSql()
     {
+        $options = $this->_queryOptions ;
+        if ($options) {
+            $options = " {$options} ";
+        }
+
         $limitOffset = $this->buildLimitOffset();
-        return strtr('{delete}{from}{where}{limit_offset}', [
-            '{delete}' => 'DELETE ' . $this->_queryOptions,
+        return strtr('{delete}{options}{from}{where}{limit_offset}', [
+            '{delete}' => 'DELETE',
+            '{options}' => $options,
             '{from}' => $this->buildFrom(),
             '{where}' => $this->buildWhere(),
             '{limit_offset}' => $limitOffset,
@@ -856,7 +864,7 @@ class QueryBuilder
 
     /**
      * @return string
-     * @throws Exception
+     * @throws QBException
      */
     public function toSQL()
     {
@@ -1038,17 +1046,12 @@ class QueryBuilder
     {
         foreach ($this->_select as $alias => $item)
         {
-            if (!is_numeric($alias)) {
-                if ($column == $alias) {
-                    return true;
-                }
+            if (!is_numeric($alias) && $column == $alias) {
+                return true;
             }
 
-            if ($item instanceof Aggregation) {
-                if ($column == $item->getAlias())
-                {
-                    return true;
-                }
+            if (($item instanceof Aggregation) && $column == $item->getAlias()) {
+                return true;
             }
         }
 

@@ -2,12 +2,10 @@
 
 namespace Tsukasa\QueryBuilder\Aggregation;
 
-use Tsukasa\QueryBuilder\QueryBuilder;
-
 class Sum extends Aggregation
 {
-    public function toSQL(QueryBuilder $qb = null)
+    protected function expressionTemplate()
     {
-        return 'SUM(' . parent::toSQL($qb) . ')' . (empty($this->alias) ? '' : ' AS ' . $this->getQuotedAlias($qb));
+        return 'SUM({field})';
     }
 }

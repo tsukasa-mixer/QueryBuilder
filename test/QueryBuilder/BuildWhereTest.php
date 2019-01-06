@@ -52,8 +52,8 @@ class BuildWhereTest extends BaseTest
             ->order(['rgt']);
 
         $this->assertSql('SELECT `test_1`.`id`, `test_1`.`root`, `test_1`.`lft`, `test_1`.`rgt`, `test_1`.`rgt`-`test_1`.`lft`-1 AS `move`', $query->buildSelect());
-        $this->assertSql('SELECT `test_1`.`id`, `test_1`.`root`, `test_1`.`lft`, `test_1`.`rgt`, `test_1`.`rgt`-`test_1`.`lft`-1 AS `move` FROM `test` AS `test_1` WHERE (NOT (`test_1`.`lft`=`test_1`.`rgt`-1 AND `test_1`.`id` IN ('
-            . $subQuerySql . '))) ORDER BY `test_1`.`rgt` ASC', $query->toSQL());
+        $this->assertSql('SELECT `test_1`.`id`, `test_1`.`root`, `test_1`.`lft`, `test_1`.`rgt`, `test_1`.`rgt`-`test_1`.`lft`-1 AS `move` FROM `test` AS `test_1` WHERE (NOT ((`test_1`.`lft`=`test_1`.`rgt`-1) AND (`test_1`.`id` IN ('
+            . $subQuerySql . ')))) ORDER BY `test_1`.`rgt` ASC', $query->toSQL());
     }
 
     public function testQAnd()

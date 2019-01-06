@@ -2,12 +2,10 @@
 
 namespace Tsukasa\QueryBuilder\Q;
 
-use Tsukasa\QueryBuilder\QueryBuilder;
-
 class QOrNot extends QOr
 {
-    public function toSQL(QueryBuilder $queryBuilder)
+    public function toSQL()
     {
-        return 'NOT (' . parent::toSQL($queryBuilder) . ')';
+        return 'NOT (' . parent::toSQL() . ')';
     }
 }

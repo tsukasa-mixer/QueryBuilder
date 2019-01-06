@@ -631,41 +631,32 @@ class QueryBuilder
 
     /**
      * @param $condition
+     * @param string $operator
      * @return string
      */
-    protected function parseCondition($condition)
+    public function parseCondition($condition, $operator = 'AND')
     {
         $tableAlias = $this->getAlias();
         $parts = [];
 
-        if ($condition instanceof Expression) {
-            $parts[] = $this->getAdapter()->quoteSql($condition->toSQL());
-        }
-        else if ($condition instanceof Q) {
-            //@TODO:FIX ME ALL
-            $condition->setLookupBuilder($this->getLookupBuilder());
-            $condition->setAdapter($this->getAdapter());
-            $condition->setTableAlias($tableAlias);
-            $parts[] = $condition->toSQL($this);
-        }
-        else if ($condition instanceof QueryBuilder) {
-            $parts[] = $condition->toSQL();
-        }
-        else if (is_array($condition)) {
+        if (is_array($condition)) {
             foreach ($condition as $key => $value)
             {
                 if (is_numeric($key)) {
                     if ($value instanceof Expression) {
-                        $parts[] = $this->parseCondition($value);
+                        $parts[] = $this->parseCondition($value, $operator);
                     }
                     elseif ($value instanceof QueryBuilder) {
-                        $parts[] = $this->parseCondition($value);
+                        $parts[] = $this->parseCondition($value, $operator);
                     }
                     else if ($value instanceof Q) {
-                        $parts[] = $this->parseCondition($value);
+                        $parts[] = $this->parseCondition($value, $operator);
                     }
-                    else if (is_string($condition)) {
-                        $parts[] = $condition;
+                    else if (is_array($value)) {
+                        $parts[] = $this->parseCondition($value, $operator);
+                    }
+                    else if (is_string($value)) {
+                        $parts[] = $value;
                     }
                 } else {
                     $value = $this->getAdapter()->prepareValue($value);
@@ -678,6 +669,18 @@ class QueryBuilder
                     $parts[] = $this->lookupBuilder->runLookup($this->getAdapter(), $lookup, $column, $lookupValue);
                 }
             }
+        } else if ($condition instanceof Expression) {
+            $parts[] = $condition->toSQL();
+        }
+        else if ($condition instanceof Q) {
+            $parts[] = $condition
+                ->setQB($this)
+                ->setAdapter($this->getAdapter())
+                ->setTableAlias($tableAlias)
+                ->toSQL();
+        }
+        else if ($condition instanceof QueryBuilder) {
+            $parts[] = $condition->toSQL();
         }
         else if (is_string($condition)) {
             $parts[] = $condition;
@@ -687,7 +690,7 @@ class QueryBuilder
             return $parts[0];
         }
 
-        return '(' . implode(') AND (', $parts) . ')';
+        return '(' . implode(') '.$operator.' (', $parts) . ')';
     }
 
     public function buildAndCondition($operator, $operands, &$params)

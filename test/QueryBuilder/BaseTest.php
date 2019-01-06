@@ -21,9 +21,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $config = require(__DIR__ . '/config/' . (@getenv('TRAVIS') ? 'config_travis.php' : 'config.php'));
+        if (extension_loaded('pdo_' . $this->driver)) {
+            $this->markTestSkipped('Missing extension for ' . $this->driver . ' driver');
+        }
+
+        $config = require __DIR__ . '/config/' . (@getenv('TRAVIS') ? 'config_travis.php' : 'config.php');
+
         $driverConfig = [];
-        if (isset($config[$this->driver]) && extension_loaded('pdo_' . $this->driver)) {
+
+        if (isset($config[$this->driver])) {
             $driverConfig = $config[$this->driver];
         } else {
             $this->markTestSkipped('Missing config for ' . $this->driver . ' driver');

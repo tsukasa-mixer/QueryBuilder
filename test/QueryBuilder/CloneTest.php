@@ -2,11 +2,11 @@
 
 namespace Tsukasa\Tests\QueryBuilder;
 
-use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
+use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
 
-class CloneCallback extends  AbstractCallback
+class CloneColumnCallback extends  AbstractColumnCallback
 {
     public function run(QueryBuilder $queryBuilder, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
@@ -59,7 +59,7 @@ class CloneTest extends BaseTest
     public function testCloneCallback()
     {
         $qb = $this->getQueryBuilder();
-        $qb->getLookupBuilder()->setColumnCallback(new CloneCallback);
+        $qb->getLookupBuilder()->setColumnCallback(new CloneColumnCallback);
         $qb->from('user')->addWhere(['test__id' => 1])->setAlias('user_1');
         $sql = 'SELECT `user_1`.* FROM `user` AS `user_1` LEFT JOIN `test` AS `test_1` ON `test_1`.`id`=`user_1`.`user_id` WHERE (`user_1`.`id`=1)';
 

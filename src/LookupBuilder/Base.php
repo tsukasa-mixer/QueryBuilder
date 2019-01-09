@@ -2,8 +2,8 @@
 
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
-use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
+use Tsukasa\QueryBuilder\Callbacks\AbstractFetchColumnCallback;
 use Tsukasa\QueryBuilder\Callbacks\AbstractJoinCallback;
 use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
@@ -22,7 +22,7 @@ abstract class Base implements ILookupBuilder
      */
     protected $separator = '__';
     /**
-     * @var AbstractCallback|null
+     * @var AbstractColumnCallback|null
      */
     protected $columnCallback;
     /**
@@ -30,7 +30,7 @@ abstract class Base implements ILookupBuilder
      */
     protected $joinCallback;
     /**
-     * @var AbstractColumnCallback|null
+     * @var AbstractFetchColumnCallback|null
      */
     protected $fetchColumnCallback;
     /**
@@ -99,7 +99,7 @@ abstract class Base implements ILookupBuilder
                 return $call($column);
             }
 
-            if ($this->fetchColumnCallback instanceof AbstractColumnCallback) {
+            if ($this->fetchColumnCallback instanceof AbstractFetchColumnCallback) {
                 $this->fetchColumnCallback->run($column);
             }
         }
@@ -115,7 +115,7 @@ abstract class Base implements ILookupBuilder
                 return $call($queryBuilder, $this, $lookupNodes, $value);
             }
 
-            if ($this->columnCallback instanceof AbstractCallback) {
+            if ($this->columnCallback instanceof AbstractColumnCallback) {
                 return $this->columnCallback->run($queryBuilder, $this, $lookupNodes, $value);
             }
         }

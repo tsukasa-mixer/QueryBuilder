@@ -3,14 +3,14 @@
 namespace Tsukasa\Tests\QueryBuilder;
 
 use Exception;
-use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
+use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
 use Tsukasa\QueryBuilder\QueryBuilderFactory;
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 
-class CallbackTestCallback extends AbstractCallback
+class CallbackTestColumnCallback extends AbstractColumnCallback
 {
     public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
@@ -37,7 +37,7 @@ class CallbackTestCallback extends AbstractCallback
     }
 }
 
-class CallbackTestTwoCallback extends AbstractCallback
+class CallbackTestTwoColumnCallback extends AbstractColumnCallback
 {
     public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
@@ -82,8 +82,8 @@ class CallbackTest extends BaseTest
     public function testSimple()
     {
         $qb = $this->getQueryBuilder();
-        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestCallback);
-        $this->assertInstanceOf(CallbackTestCallback::class, $qb->getLookupBuilder()->getColumnCallback());
+        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestColumnCallback);
+        $this->assertInstanceOf(CallbackTestColumnCallback::class, $qb->getLookupBuilder()->getColumnCallback());
         $qb->from(['t' => 'test'])->addWhere([
             'products__categories__name__in' => ['foo', 'bar']
         ]);
@@ -96,8 +96,8 @@ class CallbackTest extends BaseTest
     public function testHard()
     {
         $qb = $this->getQueryBuilder();
-        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestTwoCallback);
-        $this->assertInstanceOf(CallbackTestTwoCallback::class, $qb->getLookupBuilder()->getColumnCallback());
+        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestTwoColumnCallback);
+        $this->assertInstanceOf(CallbackTestTwoColumnCallback::class, $qb->getLookupBuilder()->getColumnCallback());
         $qb->from('test')->addWhere([
             'products__categories__statuses__name__in' => ['foo', 'bar']
         ]);

@@ -5,8 +5,7 @@ use Exception;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
-use Tsukasa\QueryBuilder\Q\Q;
-use Tsukasa\QueryBuilder\Q\QAnd;
+use Tsukasa\QueryBuilder\Interfaces\IToSql;
 
 abstract class BaseAdapter implements ISQLGenerator
 {
@@ -17,7 +16,7 @@ abstract class BaseAdapter implements ISQLGenerator
     /**
      * @var null|\PDO
      */
-    protected $driver = null;
+    protected $driver;
 
     public function __construct($driver = null)
     {
@@ -117,21 +116,25 @@ abstract class BaseAdapter implements ISQLGenerator
      * quotes in a row - as in Pascal. C-style escapes using the backslash
      * character are not supported because they are not standard SQL.
      *
-     * @param string $str string to be quoted
+     * @param string $value string to be quoted
      * @return string the properly quoted string
      * @see http://www.php.net/manual/en/function.PDO-quote.php
      */
-    public function quoteValue($str)
+    public function quoteValue($value)
     {
-        if ($str instanceof Expression)
-        {
-            return $str->toSQL();
-        }
-        else if (!is_string($str)) {
-            return $str;
+        if ($value instanceof IToSql) {
+            return $value->toSql();
+        } else if ($value === true || strtolower($value) === 'true') {
+            return 'TRUE';
+        } else if ($value === false || strtolower($value) === 'false') {
+            return 'FALSE';
+        } else if ($value === null || strtolower($value) === 'null') {
+            return 'NULL';
+        } else if (is_string($value) && $driver = $this->getDriver()) {
+            return $driver->quote($value);
         }
 
-        return $this->getDriver()->quote($str);
+        return $value;
     }
 
     /**
@@ -243,16 +246,16 @@ abstract class BaseAdapter implements ISQLGenerator
         if (!is_array($columns)) {
             if ($columns instanceof Aggregation) {
                 $columns->setFieldsSql($this->buildColumns($columns->getFields()));
-                return $this->quoteSql($columns->toSQL());
+                return $columns->toSQL();
             } else if (strpos($columns, '(') !== false) {
-                return $this->quoteSql($columns);
+                return $columns;
             } else {
                 $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
             }
         }
         foreach ($columns as $i => $column) {
             if ($column instanceof Expression) {
-                $columns[$i] = $this->quoteSql($column->toSQL());
+                $columns[$i] = $column->toSQL();
             } else if (strpos($column, 'AS') !== false) {
                 if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)([\w\-_\.]+)$/', $column, $matches)) {
                     list(, $rawColumn, $rawAlias) = $matches;
@@ -329,19 +332,9 @@ abstract class BaseAdapter implements ISQLGenerator
             foreach ($rows as $row) {
                 $record = [];
                 foreach ($row as $value) {
-                    if ($value instanceof Expression) {
-                        $value = $value->toSQL();
-                    } else if ($value === true || $value === 'true') {
-                        $value = 'TRUE';
-                    } else if ($value === false || $value === 'false') {
-                        $value = 'FALSE';
-                    } else if ($value === null || $value === 'null') {
-                        $value = 'NULL';
-                    } else if (is_string($value)) {
-                        $value = $this->quoteValue($value);
-                    }
 
-                    $record[] = $value;
+
+                    $record[] = $value = $this->quoteValue($value);
                 }
                 $values[] = '(' . implode(', ', $record) . ')';
             }
@@ -355,19 +348,7 @@ abstract class BaseAdapter implements ISQLGenerator
             }, array_keys($rows));
 
             $values = array_map(function ($value) {
-                if ($value instanceof Expression) {
-                    $value = $value->toSQL();
-                } else if ($value === true || $value === 'true') {
-                    $value = 'TRUE';
-                } else if ($value === false || $value === 'false') {
-                    $value = 'FALSE';
-                } else if ($value === null || $value === 'null') {
-                    $value = 'NULL';
-                } else if (is_string($value)) {
-                    $value = $this->quoteValue($value);
-                }
-
-                return $value;
+                return $this->quoteValue($value);
             }, $rows);
 
             $sql = 'INSERT'. $options .' INTO ' . $this->quoteTableName($tableName) . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $values) . ')';
@@ -381,19 +362,7 @@ abstract class BaseAdapter implements ISQLGenerator
         $tableName = $this->getRawTableName($tableName);
         $parts = [];
         foreach ($columns as $column => $value) {
-            if ($value instanceof Expression) {
-                $val = $this->quoteSql($value->toSQL());
-                // TODO refact, use getSqlType
-            } else if ($value === 'true' || $value === true) {
-                $val = 'TRUE';
-            } else if ($value === null || $value === 'null') {
-                $val = 'NULL';
-            } else if ($value === false || $value === 'false') {
-                $val = 'FALSE';
-            } else {
-                $val = $this->quoteValue($value);
-            }
-            $parts[] = $this->quoteColumn($column) . '=' . $val;
+            $parts[] = $this->quoteColumn($column) . '=' . $this->quoteValue($value);
         }
         if ($options) {
             $options = " {$options} ";
@@ -718,8 +687,10 @@ abstract class BaseAdapter implements ISQLGenerator
             return '';
         }
 
-        if ($having instanceof Q) {
-            $sql = $having->toSQL($queryBuilder);
+        if ($having instanceof IToSql) {
+            $sql = $having
+                ->setQb($queryBuilder)
+                ->toSql();
         } else {
             $sql = $this->quoteSql($having);
         }
@@ -846,7 +817,7 @@ abstract class BaseAdapter implements ISQLGenerator
         if ($options) {
             $selectSql .= $options . ' ';
         }
-        
+
         if (empty($columns)) {
             return $selectSql . '*';
         }

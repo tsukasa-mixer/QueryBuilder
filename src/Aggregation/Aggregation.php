@@ -2,32 +2,15 @@
 
 namespace Tsukasa\QueryBuilder\Aggregation;
 
-use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Expression\AbstractExpression;
 
-abstract class Aggregation
+abstract class Aggregation extends AbstractExpression
 {
     protected $alias;
-
-    protected $tableAlias;
 
     protected $fields;
 
     protected $fieldsSql = '';
-
-    /** @var QueryBuilder */
-    protected $qb;
-
-    public function setQb(QueryBuilder $qb)
-    {
-        $this->qb = $qb;
-
-        return $this;
-    }
-
-    public function getQb()
-    {
-        return $this->qb;
-    }
 
     public function setFieldSql($sql)
     {
@@ -35,15 +18,10 @@ abstract class Aggregation
         return $this;
     }
 
-    public function setTableAlias($alias)
-    {
-        $this->tableAlias = $alias;
-        return $this;
-    }
 
     protected function quoteColumn($column)
     {
-        return $this->getQb()->getAdapter()->quoteColumn($column);
+        return $this->qb->getAdapter()->quoteColumn($column);
     }
 
     /**
@@ -58,11 +36,15 @@ abstract class Aggregation
         ]);
     }
 
-    public function toSQL(QueryBuilder $qb = null)
+    public function toSQL()
     {
-        if ($qb) { $this->qb = $qb; }
+        $sql = $this->expression();
 
-        return $this->expression() . (empty($this->alias) ? '' : ' AS ' .  $this->quoteColumn($this->getAlias()));
+        if ($this->getAlias()) {
+            $sql .= ' AS ' .  $this->quoteColumn($this->getAlias());
+        }
+
+        return $sql;
     }
 
     public function getField()

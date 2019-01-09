@@ -2,9 +2,11 @@
 
 namespace Tsukasa\QueryBuilder;
 
-class Expression
+use Tsukasa\QueryBuilder\Expression\AbstractExpression;
+
+class Expression extends AbstractExpression
 {
-    private $expression = '';
+    private $expression;
 
     public function __construct($expression)
     {
@@ -13,6 +15,6 @@ class Expression
 
     public function toSQL()
     {
-        return $this->expression;
+        return $this->expression ?: '';
     }
 }

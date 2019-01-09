@@ -2,11 +2,9 @@
 
 namespace Tsukasa\QueryBuilder\Q;
 
-use Tsukasa\QueryBuilder\Interfaces\IAdapter;
-use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Expression\AbstractExpression;
 
-abstract class Q
+abstract class Q extends AbstractExpression
 {
     /**
      * @var array|string|Q
@@ -16,49 +14,10 @@ abstract class Q
      * @var string
      */
     protected $operator = 'AND';
-    /**
-     * @var ILookupBuilder
-     */
-    protected $lookupBuilder;
-    /**
-     * @var IAdapter
-     */
-    protected $adapter;
-
-    /** @var QueryBuilder */
-    protected $qb;
-    /**
-     * @var string|null
-     */
-    private $_tableAlias;
 
     public function __construct($where)
     {
         $this->where = $where;
-    }
-
-    public function setQB(QueryBuilder $queryBuilder)
-    {
-        $this->qb = $queryBuilder;
-        return $this;
-    }
-
-    public function setTableAlias($tableAlias)
-    {
-        $this->_tableAlias = $tableAlias;
-        return $this;
-    }
-
-    public function setLookupBuilder(ILookupBuilder $lookupBuilder)
-    {
-        $this->lookupBuilder = $lookupBuilder;
-        return $this;
-    }
-
-    public function setAdapter(IAdapter $adapter)
-    {
-        $this->adapter = $adapter;
-        return $this;
     }
 
     public function getWhere()
@@ -103,8 +62,8 @@ abstract class Q
 
     /**
      * @param $part
+     * @param null|string $operator
      * @return string
-     * @throws Exception
      */
     protected function parsePart($part, $operator = null)
     {

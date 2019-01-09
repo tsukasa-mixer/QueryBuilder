@@ -21,7 +21,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        if (extension_loaded('pdo_' . $this->driver)) {
+        if (!extension_loaded('pdo_' . $this->driver)) {
             $this->markTestSkipped('Missing extension for ' . $this->driver . ' driver');
         }
 

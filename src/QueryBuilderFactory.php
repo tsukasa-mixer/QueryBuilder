@@ -3,7 +3,6 @@
 namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\Driver\Connection;
-use Tsukasa\QueryBuilder\Interfaces\ICallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 
 class QueryBuilderFactory

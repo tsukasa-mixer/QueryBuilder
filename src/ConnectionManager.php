@@ -19,14 +19,8 @@ class ConnectionManager
      * @var array|\Doctrine\DBAL\Connection[]
      */
     protected $connections = [];
-    /**
-     * @var null
-     */
-    protected $configuration = null;
-    /**
-     * @var null
-     */
-    protected $eventManager = null;
+    protected $configuration;
+    protected $eventManager;
 
     /**
      * ConnectionManager constructor.
@@ -39,6 +33,7 @@ class ConnectionManager
 
     /**
      * @param array $connections
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function setConnections(array $connections)
     {
@@ -65,7 +60,7 @@ class ConnectionManager
      * @param string $name
      * @return $this
      */
-    public function setDefaultConnection(string $name)
+    public function setDefaultConnection($name)
     {
         $this->defaultConnection = $name;
         return $this;

@@ -2,7 +2,6 @@
 
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
-use Exception;
 use Tsukasa\QueryBuilder\Callbacks\AbstractCallback;
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Callbacks\AbstractJoinCallback;
@@ -25,7 +24,7 @@ abstract class Base implements ILookupBuilder
     /**
      * @var AbstractCallback|null
      */
-    protected $callback;
+    protected $columnCallback;
     /**
      * @var AbstractJoinCallback|null
      */
@@ -57,12 +56,12 @@ abstract class Base implements ILookupBuilder
     }
 
     /**
-     * @param mixed $callback
+     * @param mixed $columnCallback
      * @return $this
      */
-    public function setCallback($callback)
+    public function setColumnCallback($columnCallback)
     {
-        $this->callback = $callback;
+        $this->columnCallback = $columnCallback;
         return $this;
     }
 
@@ -82,9 +81,9 @@ abstract class Base implements ILookupBuilder
         return $this;
     }
 
-    public function getCallback()
+    public function getColumnCallback()
     {
-        return $this->callback;
+        return $this->columnCallback;
     }
 
     public function getJoinCallback()
@@ -110,14 +109,14 @@ abstract class Base implements ILookupBuilder
 
     public function runCallback(QueryBuilder $queryBuilder, $lookupNodes, $value)
     {
-        if ($this->callback) {
-            if ($this->callback instanceof \Closure) {
-                $call = $this->callback;
+        if ($this->columnCallback) {
+            if ($this->columnCallback instanceof \Closure) {
+                $call = $this->columnCallback;
                 return $call($queryBuilder, $this, $lookupNodes, $value);
             }
 
-            if ($this->callback instanceof AbstractCallback) {
-                return $this->callback->run($queryBuilder, $this, $lookupNodes, $value);
+            if ($this->columnCallback instanceof AbstractCallback) {
+                return $this->columnCallback->run($queryBuilder, $this, $lookupNodes, $value);
             }
         }
 

@@ -9,23 +9,6 @@ use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 class Adapter extends BaseAdapter implements IAdapter
 {
     /**
-     * @param string $str
-     * @return string
-     */
-    public function quoteValue($str)
-    {
-        if ($str === true || $str === 'true') {
-            return 'TRUE';
-        } else if ($str === false || $str === 'false') {
-            return 'FALSE';
-        } else if ($str === null || $str === 'null') {
-            return 'NULL';
-        } else {
-            return parent::quoteValue($str);
-        }
-    }
-
-    /**
      * @param $tableName
      * @param bool $ifExists
      * @param bool $cascade
@@ -58,7 +41,7 @@ class Adapter extends BaseAdapter implements IAdapter
      */
     public function sqlResetSequence($sequenceName, $value)
     {
-        return "SELECT SETVAL('" . $sequenceName . "', " . $this->quoteValue($value) . ",false)";
+        return "SELECT SETVAL('" . $sequenceName . "', " . $this->quoteValue($value) . ',false)';
     }
 
     /**
@@ -74,7 +57,9 @@ class Adapter extends BaseAdapter implements IAdapter
                 $sql .= ' OFFSET ' . $offset;
             }
             return ' ' . $sql;
-        } else if ($this->hasOffset($offset)) {
+        }
+
+        if ($this->hasOffset($offset)) {
             return ' LIMIT ALL OFFSET ' . $offset;
         }
 
@@ -224,7 +209,7 @@ class Adapter extends BaseAdapter implements IAdapter
      */
     public function getDateTime($value = null)
     {
-        return $this->formatDateTime($value, "Y-m-d H:i:s");
+        return $this->formatDateTime($value, 'Y-m-d H:i:s');
     }
 
     /**
@@ -233,7 +218,7 @@ class Adapter extends BaseAdapter implements IAdapter
      */
     public function getDate($value = null)
     {
-        return $this->formatDateTime($value, "Y-m-d");
+        return $this->formatDateTime($value, 'Y-m-d');
     }
 
     /**

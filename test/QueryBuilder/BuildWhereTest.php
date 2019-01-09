@@ -60,7 +60,7 @@ class BuildWhereTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QAnd(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (`id`=1 AND `name`=\'foo\')', $qb->buildWhere());
+        $this->assertSql('WHERE ((`id`=1) AND (`name`=\'foo\'))', $qb->buildWhere());
     }
 
     public function testQAndNotRaw()
@@ -74,20 +74,20 @@ class BuildWhereTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QOr(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (`id`=1 OR `name`=\'foo\')', $qb->buildWhere());
+        $this->assertSql('WHERE ((`id`=1) OR (`name`=\'foo\'))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QOr([
             ['id' => 1, 'name' => 'username'], ['id' => 2, 'name' => 'foobar']
         ]));
-        $this->assertSql('WHERE ((`id`=1 OR `name`=\'username\') OR (`id`=2 OR `name`=\'foobar\'))', $qb->buildWhere());
+        $this->assertSql('WHERE (((`id`=1) OR (`name`=\'username\')) OR ((`id`=2) OR (`name`=\'foobar\')))', $qb->buildWhere());
     }
 
     public function testQAndNot()
     {
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QAndNot(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (NOT (`id`=1 AND `name`=\'foo\'))', $qb->buildWhere());
+        $this->assertSql('WHERE (NOT ((`id`=1) AND (`name`=\'foo\')))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QAndNot([
@@ -100,7 +100,7 @@ class BuildWhereTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QOrNot(['id' => 1, 'name' => 'foo']));
-        $this->assertSql('WHERE (NOT (`id`=1 OR `name`=\'foo\'))', $qb->buildWhere());
+        $this->assertSql('WHERE (NOT ((`id`=1) OR (`name`=\'foo\')))', $qb->buildWhere());
 
         $qb = $this->getQueryBuilder();
         $qb->addWhere(new QOrNot([
@@ -113,7 +113,7 @@ class BuildWhereTest extends BaseTest
             'id__in' => [1, 2, 3],
             'price__gte' => 100
         ]));
-        $this->assertEquals($this->quoteSql('SELECT * WHERE (NOT (`id` IN (1, 2, 3) OR `price`>=100))'), $qb->toSQL());
+        $this->assertEquals($this->quoteSql('SELECT * WHERE (NOT ((`id` IN (1, 2, 3)) OR (`price`>=100)))'), $qb->toSQL());
     }
 
     public function testMixed()

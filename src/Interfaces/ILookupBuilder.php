@@ -10,6 +10,7 @@ use Tsukasa\QueryBuilder\QueryBuilder;
 interface ILookupBuilder
 {
     /**
+     * @param QueryBuilder $queryBuilder
      * @param $lookup
      * @param $value
      * @return array
@@ -17,6 +18,7 @@ interface ILookupBuilder
     public function parseLookup(QueryBuilder $queryBuilder, $lookup, $value);
 
     /**
+     * @param QueryBuilder $queryBuilder
      * @param array $where
      * @return mixed
      */
@@ -26,7 +28,7 @@ interface ILookupBuilder
      * @param \Closure $callback
      * @return mixed
      */
-    public function setCallback($callback);
+    public function setColumnCallback($callback);
 
     /**
      * @param ILookupCollection $lookupCollection

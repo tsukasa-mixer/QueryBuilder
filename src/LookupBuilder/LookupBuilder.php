@@ -9,27 +9,31 @@ class LookupBuilder extends Base
 {
     public function parseLookup(QueryBuilder $queryBuilder, $rawLookup, $value)
     {
-        if (substr_count($rawLookup, $this->separator) > 1) {
-            if (empty($this->callback)) {
-                throw new \Exception('Unknown lookup: ' . $rawLookup);
-            }
-
-            return $this->runCallback($queryBuilder, explode($this->separator, $rawLookup), $value);
-        }
-
-        if (substr_count($rawLookup, $this->separator) === 0) {
-            $rawLookup = $this->fetchColumnName($rawLookup);
-            return [$this->default, $rawLookup, $value];
-        }
-
+        $nodesCount = substr_count($rawLookup, $this->separator);
         $lookupNodes = explode($this->separator, $rawLookup);
-        if ($this->hasLookup(end($lookupNodes)) && substr_count($rawLookup, $this->separator) === 1) {
-            list($column, $lookup) = explode($this->separator, $rawLookup);
-            if ($this->hasLookup($lookup) === false) {
-                throw new QBException('Unknown lookup:' . $lookup);
-            }
-            $column = $this->fetchColumnName($column);
-            return [$lookup, $column, $value];
+
+        switch (substr_count($rawLookup, $this->separator)) {
+            case 0:
+                $rawLookup = $this->fetchColumnName($rawLookup);
+                return [$this->default, $rawLookup, $value];
+            case 1:
+                if ($this->hasLookup(end($lookupNodes))) {
+                    list($column, $lookup) = explode($this->separator, $rawLookup);
+                    if ($this->hasLookup($lookup) === false) {
+                        throw new QBException('Unknown lookup:' . $lookup);
+                    }
+                    $column = $this->fetchColumnName($column);
+                    return [$lookup, $column, $value];
+                }
+                break;
+            default:
+                if ($nodesCount > 1) {
+                    if ($this->columnCallback === null) {
+                        throw new QBException('Unknown lookup: ' . $rawLookup);
+                    }
+
+                    return $this->runCallback($queryBuilder, explode($this->separator, $rawLookup), $value);
+                }
         }
 
         return $this->runCallback($queryBuilder, $lookupNodes, $value);

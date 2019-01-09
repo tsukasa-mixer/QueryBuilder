@@ -82,8 +82,8 @@ class CallbackTest extends BaseTest
     public function testSimple()
     {
         $qb = $this->getQueryBuilder();
-        $qb->getLookupBuilder()->setCallback(new CallbackTestCallback);
-        $this->assertTrue($qb->getLookupBuilder()->getCallback() instanceof CallbackTestCallback);
+        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestCallback);
+        $this->assertInstanceOf(CallbackTestCallback::class, $qb->getLookupBuilder()->getColumnCallback());
         $qb->from(['t' => 'test'])->addWhere([
             'products__categories__name__in' => ['foo', 'bar']
         ]);
@@ -96,8 +96,8 @@ class CallbackTest extends BaseTest
     public function testHard()
     {
         $qb = $this->getQueryBuilder();
-        $qb->getLookupBuilder()->setCallback(new CallbackTestTwoCallback);
-        $this->assertTrue($qb->getLookupBuilder()->getCallback() instanceof CallbackTestTwoCallback);
+        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestTwoCallback);
+        $this->assertInstanceOf(CallbackTestTwoCallback::class, $qb->getLookupBuilder()->getColumnCallback());
         $qb->from('test')->addWhere([
             'products__categories__statuses__name__in' => ['foo', 'bar']
         ]);

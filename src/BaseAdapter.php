@@ -319,7 +319,7 @@ abstract class BaseAdapter implements ISQLGenerator
             $options = " {$options} ";
         }
 
-        if (isset($rows[0]) && is_array($rows)) {
+        if (is_array($rows) && isset($rows[0])) {
             $columns = array_map(function ($column) {
                 return $this->quoteColumn($column);
             }, array_keys($rows[0]));
@@ -383,17 +383,15 @@ abstract class BaseAdapter implements ISQLGenerator
         foreach ($columns as $column => $value) {
             if ($value instanceof Expression) {
                 $val = $this->quoteSql($value->toSQL());
-            } else {
                 // TODO refact, use getSqlType
-                if ($value === 'true' || $value === true) {
-                    $val = 'TRUE';
-                } else if ($value === null || $value === 'null') {
-                    $val = 'NULL';
-                } else if ($value === false || $value === 'false') {
-                    $val = 'FALSE';
-                } else {
-                    $val = $this->quoteValue($value);
-                }
+            } else if ($value === 'true' || $value === true) {
+                $val = 'TRUE';
+            } else if ($value === null || $value === 'null') {
+                $val = 'NULL';
+            } else if ($value === false || $value === 'false') {
+                $val = 'FALSE';
+            } else {
+                $val = $this->quoteValue($value);
             }
             $parts[] = $this->quoteColumn($column) . '=' . $val;
         }
@@ -711,6 +709,7 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param $having
+     * @param QueryBuilder|null $queryBuilder
      * @return string
      */
     public function sqlHaving($having, QueryBuilder $queryBuilder = null)
@@ -740,7 +739,7 @@ abstract class BaseAdapter implements ISQLGenerator
         }
 
         if ($union instanceof QueryBuilder) {
-            $unionSQL = $union->order(null)->toSQL();
+            $unionSQL = $union->setOrder(null)->toSQL();
         } else {
             $unionSQL = $this->quoteSql($union);
         }

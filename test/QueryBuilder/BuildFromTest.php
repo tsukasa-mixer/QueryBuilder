@@ -34,7 +34,7 @@ class BuildFromTest extends BaseTest
         $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name`='foo')) AS `t`";
 
         $qbSub = $this->getQueryBuilder();
-        $qbSub->from(['comment'])->select('user_id')->where(['name' => 'foo']);
+        $qbSub->from(['comment'])->select('user_id')->addWhere(['name' => 'foo']);
 
         $qb = $this->getQueryBuilder()->from(['t' => $qbSub->toSQL()]);
         $this->assertSql($result, $qb->buildFrom());
@@ -45,7 +45,7 @@ class BuildFromTest extends BaseTest
         $result = "FROM (SELECT `user_id` FROM `comment` WHERE (`name`='foo')) AS `t`";
 
         $qbSub = $this->getQueryBuilder();
-        $qbSub->from(['comment'])->select('user_id')->where(['name' => 'foo']);
+        $qbSub->from(['comment'])->select('user_id')->addWhere(['name' => 'foo']);
 
         $qb = $this->getQueryBuilder()->from(['t' => $qbSub]);
         $this->assertSql($result, $qb->buildFrom());

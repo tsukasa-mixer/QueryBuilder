@@ -8,15 +8,15 @@ class BuildUnionTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->select('a, b, c')->from('test');
-        $qb->union(clone $qb, true);
+        $qb->addUnion(clone $qb, true);
         $this->assertEquals($this->quoteSql('SELECT `a`, `b`, `c` FROM `test` UNION ALL (SELECT `a`, `b`, `c` FROM `test`)'), $qb->toSQL());
     }
 
     public function testOrder()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('a, b, c')->from('test')->order(['-a']);
-        $qb->union(clone $qb, true);
+        $qb->select('a, b, c')->from('test')->setOrder(['-a']);
+        $qb->addUnion(clone $qb, true);
         $this->assertSql(
             'SELECT `a`, `b`, `c` FROM `test` UNION ALL (SELECT `a`, `b`, `c` FROM `test`) ORDER BY `a` DESC',
             $qb->toSQL()
@@ -27,7 +27,7 @@ class BuildUnionTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->select('a, b, c')->from('test');
-        $qb->union('SELECT `a`, `b`, `c` FROM `test`', true);
+        $qb->addUnion('SELECT `a`, `b`, `c` FROM `test`', true);
         $this->assertSql(
             'SELECT `a`, `b`, `c` FROM `test` UNION ALL (SELECT `a`, `b`, `c` FROM `test`)',
             $qb->toSQL()

@@ -132,7 +132,7 @@ class Migration
     {
         echo "    > update $table ...";
         $time = microtime(true);
-        $sql = $this->getQueryBuilder()->setTypeUpdate()->where($condition)->update($table, $columns);
+        $sql = $this->getQueryBuilder()->setTypeUpdate()->addWhere($condition)->update($table, $columns);
         $this->getDb()->createCommand($sql, $params)->execute();
         echo " done (time: " . sprintf('%.3f', microtime(true) - $time) . "s)\n";
     }
@@ -148,7 +148,7 @@ class Migration
     {
         echo "    > delete from $table ...";
         $time = microtime(true);
-        $sql = $this->getQueryBuilder()->setTypeDelete()->from($table)->where($condition)->toSQL();
+        $sql = $this->getQueryBuilder()->setTypeDelete()->from($table)->addWhere($condition)->toSQL();
         $this->getDb()->createCommand($sql,  $params)->execute();
         echo " done (time: " . sprintf('%.3f', microtime(true) - $time) . "s)\n";
     }

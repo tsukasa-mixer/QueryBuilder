@@ -521,7 +521,7 @@ class QueryBuilder
      * @param array|string $columns columns
      * @return $this
      */
-    public function group( $columns)
+    public function setGroup($columns)
     {
         if ($columns && is_string($columns)) {
             $columns = array_map('trim', explode(',', $columns));
@@ -533,13 +533,39 @@ class QueryBuilder
 
     /**
      * @param array|string $columns columns
-     * @param null $options
      * @return $this
      */
-    public function order($columns, $options = null)
+    public function addGroup($columns)
+    {
+        if ($columns && is_string($columns)) {
+            $columns = array_map('trim', explode(',', $columns));
+        }
+        $this->_group = array_merge($this->_group, $columns);
+        return $this;
+    }
+
+    /**
+     * @param array|string $columns columns
+     * @param null $options
+     * @return self
+     */
+    public function setOrder($columns, $options = null)
     {
         $this->_order = $columns;
         $this->_orderOptions = $options;
+        return $this;
+    }
+
+    /**
+     * @param array|string $columns
+     * @return self
+     */
+    public function addOrder($columns)
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        $this->_order = array_merge($this->_order, $columns);
         return $this;
     }
 
@@ -549,18 +575,11 @@ class QueryBuilder
      */
     public function clear()
     {
-        $this->_whereAnd = [];
-        $this->_whereOr = [];
-        $this->_join = [];
-        $this->_insert = [];
-        $this->_update = [];
-        $this->_group = [];
-        $this->_order = [];
-        $this->_select = [];
-        $this->_from = '';
-        $this->_union = [];
-        $this->_having = [];
-        return $this;
+        return new static(
+            $this->getConnection(),
+            $this->getAdapter(),
+            $this->getLookupBuilder()
+        );
     }
 
     /**
@@ -717,7 +736,7 @@ class QueryBuilder
      * @param $condition
      * @return $this
      */
-    public function where($condition)
+    public function addWhere($condition)
     {
         if (!empty($condition)) {
             $this->_whereAnd[] = $condition;
@@ -729,9 +748,11 @@ class QueryBuilder
      * @param $condition
      * @return $this
      */
-    public function orWhere($condition)
+    public function addOrWhere($condition)
     {
-        $this->_whereOr[] = $condition;
+        if (!empty($condition)) {
+            $this->_whereOr[] = $condition;
+        }
         return $this;
     }
 
@@ -925,12 +946,12 @@ class QueryBuilder
     }
 
     /**
-     * @param array|string|Q $where lookups
+     * @param array|string|Q $having lookups
      * @return $this
      */
-    public function having($having)
+    public function setHaving($having)
     {
-        if (($having instanceof Q) == false) {
+        if (!($having instanceof Q)) {
             $having = new QAnd($having);
         }
         $having->setLookupBuilder($this->getLookupBuilder());
@@ -939,7 +960,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function union($union, $all = false)
+    public function addUnion($union, $all = false)
     {
         $this->_union[] = [$union, $all];
         return $this;

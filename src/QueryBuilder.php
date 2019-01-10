@@ -377,11 +377,20 @@ class QueryBuilder
     }
 
     /**
-     * @param $tableName string
+     * @param array|string $tableName
+     * @param null|string $alias
      * @return $this
      */
-    public function setFrom($tableName)
+    public function setFrom($tableName, $alias = null)
     {
+        if ($alias && is_string($alias)) {
+            if (is_array($tableName)) {
+                $tableName = current($tableName);
+            }
+
+            $tableName = [$alias => $tableName];
+        }
+
         $this->_from = $tableName;
         return $this;
     }

@@ -357,7 +357,7 @@ class QueryBuilder
      * @param array|string $select
      * @return $this
      */
-    public function setSelect(array $select)
+    public function setSelect($select)
     {
         $this->_select = [];
 
@@ -365,8 +365,12 @@ class QueryBuilder
             return $this;
         }
 
-        foreach ($select as $key => $part) {
-            $this->addSelect($part, $key);
+        if (is_array($select)) {
+            foreach ($select as $key => $part) {
+                $this->addSelect($part, $key);
+            }
+        } else {
+            $this->addSelect($select);
         }
 
         return $this;

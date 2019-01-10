@@ -550,19 +550,6 @@ class QueryBuilder
     }
 
     /**
-     * Clear properties
-     * @return $this
-     */
-    public function clear()
-    {
-        return new static(
-            $this->getConnection(),
-            $this->getAdapter(),
-            $this->getLookupBuilder()
-        );
-    }
-
-    /**
      * @param $tableName
      * @param array $rows
      * @return $this
@@ -583,18 +570,17 @@ class QueryBuilder
         return $this;
     }
 
-    public function raw($sql)
-    {
-        return $sql;
-    }
-
     public function getAlias()
     {
         return $this->_alias;
     }
 
-    public function setAlias($alias)
+    public function setAlias($alias = null)
     {
+        if (empty($alias)) {
+            $alias = null;
+        }
+
         $this->_alias = $alias;
         return $this;
     }
@@ -713,10 +699,8 @@ class QueryBuilder
     public function setWhere($condition)
     {
         $this->_whereAnd = [];
-        if (!empty($condition)) {
-            $this->_whereAnd[] = ['AND', $condition];
-        }
-        return $this;
+
+        return $this->addWhere($condition);
     }
 
     /**
@@ -729,6 +713,13 @@ class QueryBuilder
             $this->_whereOr[] = $condition;
         }
         return $this;
+    }
+
+    public function setOrWhere($condition)
+    {
+        $this->_whereOr = [];
+
+        return $this->addWhere($condition);
     }
 
     /**
@@ -854,7 +845,7 @@ class QueryBuilder
     public function generateUpdateSql()
     {
         list($tableName, $values) = $this->_update;
-        $this->setAlias(null);
+        $this->setAlias();
         return strtr('{update}{where}', [
             '{update}' => $this->getAdapter()->sqlUpdate($tableName, $values, $this->_queryOptions),
             '{where}' => $this->buildWhere(),
@@ -1024,7 +1015,7 @@ class QueryBuilder
     protected function addColumnAlias($column)
     {
         $tableAlias = $this->getAlias();
-        if (empty($tableAlias)) {
+        if ($tableAlias === null) {
             return $column;
         }
 

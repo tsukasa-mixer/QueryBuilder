@@ -93,14 +93,15 @@ abstract class Base implements ILookupBuilder
 
     public function fetchColumnName($column)
     {
-        if ($this->fetchColumnCallback) {
+        if ($this->fetchColumnCallback !== null) {
             if ($this->fetchColumnCallback instanceof \Closure) {
                 $call = $this->fetchColumnCallback;
                 return $call($column);
             }
 
+
             if ($this->fetchColumnCallback instanceof AbstractFetchColumnCallback) {
-                $this->fetchColumnCallback->run($column);
+                return $this->fetchColumnCallback->run($column);
             }
         }
 
@@ -109,7 +110,7 @@ abstract class Base implements ILookupBuilder
 
     public function runCallback(QueryBuilder $queryBuilder, $lookupNodes, $value)
     {
-        if ($this->columnCallback) {
+        if ($this->columnCallback !== null) {
             if ($this->columnCallback instanceof \Closure) {
                 $call = $this->columnCallback;
                 return $call($queryBuilder, $this, $lookupNodes, $value);
@@ -125,7 +126,7 @@ abstract class Base implements ILookupBuilder
 
     public function runJoinCallback(QueryBuilder $queryBuilder, $lookupNodes)
     {
-        if ($this->joinCallback) {
+        if ($this->joinCallback !== null) {
             if ($this->joinCallback instanceof \Closure) {
                 $call = $this->joinCallback->bindTo($this, $this);
                 return $call($queryBuilder, $this, $lookupNodes);

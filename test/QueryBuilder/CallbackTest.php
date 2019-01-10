@@ -4,11 +4,9 @@ namespace Tsukasa\Tests\QueryBuilder;
 
 use Exception;
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderFactory;
-use Tsukasa\QueryBuilder\Database\Sqlite\Adapter;
 
 class CallbackTestColumnCallback extends AbstractColumnCallback
 {
@@ -92,6 +90,52 @@ class CallbackTest extends BaseTest
         $this->assertEquals('SELECT * FROM test AS t LEFT JOIN products AS products ON t.product_id=products.id LEFT JOIN categories AS categories ON products.category_id=categories.id WHERE (categories.name IN (foo, bar))',
             str_replace(['`', "'"], '', $sql));
     }
+
+    public function testExpression1()
+    {
+        $qb = $this->getQueryBuilder();
+        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestColumnCallback);
+
+        $this->assertInstanceOf(
+            CallbackTestColumnCallback::class,
+            $qb->getLookupBuilder()->getColumnCallback()
+        );
+
+        $qb->setFrom(['t' => 'test'])->setWhere([
+            new Expression('{products__categories__name} IN (`foo`, `bar`)')
+        ]);
+
+        $sql = $qb->toSQL();
+        $this->assertTrue($qb->hasJoin('products'));
+
+
+        $this->assertEquals('SELECT * FROM test AS t LEFT JOIN products AS products ON t.product_id=products.id LEFT JOIN categories AS categories ON products.category_id=categories.id WHERE (categories.name IN (foo, bar))',
+            str_replace(['`', "'"], '', $sql)
+        );
+    }
+
+//    public function testExpression2()
+//    {
+//        $qb = $this->getQueryBuilder();
+//        $qb->getLookupBuilder()->setColumnCallback(new CallbackTestColumnCallback);
+//
+//        $this->assertInstanceOf(
+//            CallbackTestColumnCallback::class,
+//            $qb->getLookupBuilder()->getColumnCallback()
+//        );
+//
+//        $qb->setFrom(['t' => 'test'])->setWhere([
+//            new Expression('{products__categories__name} IN (:foo, :bar)', ['foo' => 'foo', 'bar' => 'bar'])
+//        ]);
+//
+//        $sql = $qb->toSQL();
+//        $this->assertTrue($qb->hasJoin('products'));
+//
+//
+//        $this->assertEquals('SELECT * FROM test AS t LEFT JOIN products AS products ON t.product_id=products.id LEFT JOIN categories AS categories ON products.category_id=categories.id WHERE (categories.name IN (foo, bar))',
+//            str_replace(['`', "'"], '', $sql)
+//        );
+//    }
 
     public function testHard()
     {

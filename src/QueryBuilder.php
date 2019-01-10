@@ -12,7 +12,6 @@ use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\Q\Q;
-use Tsukasa\QueryBuilder\Q\QAnd;
 
 use Tsukasa\QueryBuilder\Database\Mysql\Adapter as MysqlAdapter;
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter as SqliteAdapter;
@@ -40,10 +39,6 @@ class QueryBuilder
      * @var array|string
      */
     private $_order = [];
-    /**
-     * @var null|string
-     */
-    private $_orderOptions;
     /**
      * @var array
      */
@@ -242,7 +237,7 @@ class QueryBuilder
         $rawColumn = $aggregation->getField();
         $newSelect = $this->getLookupBuilder()->buildJoin($this, $rawColumn);
         if ($newSelect === false) {
-            if (empty($tableAlias) || $rawColumn === '*') {
+            if ($tableAlias === null || $rawColumn === '*') {
                 $columns = $rawColumn;
             } elseif (strpos($rawColumn, '.') !== false) {
                 $columns = $rawColumn;
@@ -257,37 +252,6 @@ class QueryBuilder
         $aggregation->setFieldSql($fieldsSql);
 
         return $aggregation->setQB($this)->toSQL();
-    }
-
-    /**
-     * @param $columns
-     * @return array|string
-     */
-    public function buildColumnsqwe($columns)
-    {
-        if (!is_array($columns)) {
-            if ($columns instanceof Aggregation) {
-                $columns->setFieldsSql($this->buildColumns($columns->getFields()));
-                return $this->quoteSql($columns->setQb($this)->toSQL());
-            } else if (strpos($columns, '(') !== false) {
-                return $this->quoteSql($columns);
-            } else {
-                $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
-            }
-        }
-        foreach ($columns as $i => $column) {
-            if ($column instanceof Expression) {
-                $columns[$i] = $this->quoteSql($column->toSQL());
-            } else if (strpos($column, 'AS') !== false) {
-                if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)([\w\-_\.]+)$/', $column, $matches)) {
-                    list(, $rawColumn, $rawAlias) = $matches;
-                    $columns[$i] = $this->quoteColumn($rawColumn) . ' AS ' . $this->quoteColumn($rawAlias);
-                }
-            } else if (strpos($column, '(') === false) {
-                $columns[$i] = $this->quoteColumn($column);
-            }
-        }
-        return is_array($columns) ? implode(', ', $columns) : $columns;
     }
 
     /**
@@ -826,31 +790,8 @@ class QueryBuilder
         return empty($sql) ? '' : ' WHERE ' . $sql;
     }
 
-//    protected function prepareJoin()
-//    {
-//        $builder = $this->getLookupBuilder();
-//        if (is_array($this->_select)) {
-//            foreach ($this->_select as $select) {
-//                if (strpos($select, '__') > 0) {
-//                    $builder->buildJoin($select);
-//                }
-//            }
-//        } else {
-//            if (strpos($this->_select, '__') > 0) {
-//                $builder->buildJoin($this->_select);
-//            }
-//        }
-//
-//        foreach ($this->_order as $order) {
-//            $builder->buildJoin($order);
-//        }
-//
-//        foreach ($this->_group as $group) {
-//            $builder->buildJoin($group);
-//        }
-//    }
 
-    private function generateSelectSql()
+    protected function generateSelectSql()
     {
         // Fetch where conditions before pass it to adapter.
         // Reason: Dynamic sql build in callbacks
@@ -860,19 +801,6 @@ class QueryBuilder
         $where = $this->buildWhere();
         $order = $this->buildOrder();
         $union = $this->buildUnion();
-
-        /*
-        $hasAggregation = false;
-        if (is_array($this->_select)) {
-            foreach ($this->_select as $key => $value) {
-                if ($value instanceof Aggregation) {
-
-                }
-            }
-        } else {
-            $hasAggregation = $this->_select instanceof Aggregation;
-        }
-        */
 
         $select = $this->buildSelect();
         $from = $this->buildFrom();

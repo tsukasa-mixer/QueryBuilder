@@ -330,7 +330,7 @@ class QueryBuilder
         ;
 
         if (!$isValid) {
-            throw new QBException('Incorrect select');
+            throw new QBException('Incorrect select type');
         }
 
         if ($alias) {
@@ -541,28 +541,70 @@ class QueryBuilder
         return $this;
     }
 
-    /**
-     * @param array|string $columns columns
-     * @param null $options
-     * @return self
-     */
-    public function setOrder($columns, $options = null)
+    protected function pushOrder($column)
     {
-        $this->_order = $columns;
-        $this->_orderOptions = $options;
+
+    }
+
+    /**
+     * @param array|string|null $columns columns
+     * @return static
+     */
+    public function setOrder($columns)
+    {
+
+        $this->_order = [];
+
+        if (empty($columns)) {
+            return $this;
+        }
+
+        if (is_array($columns)) {
+            foreach ($columns as $column) {
+                $this->addOrder($column);
+            }
+        } else {
+            $this->addOrder($columns);
+        }
+
         return $this;
     }
 
     /**
-     * @param array|string $columns
-     * @return self
+     * @param string|Expression $column
+     * @return static
      */
-    public function addOrder($columns)
+    public function addOrder($column)
     {
-        if (!is_array($columns)) {
-            $columns = [$columns];
+        $isValid = is_string($column)
+            || is_a($column, Expression::class)
+        ;
+
+        if (!$isValid) {
+            throw new QBException('Incorrect order type');
         }
-        $this->_order = array_merge($this->_order, $columns);
+
+        if (is_string($column) && strpos($column, ',') !== false) {
+            $columns = preg_split('/\s*,\s*/', $column, -1, PREG_SPLIT_NO_EMPTY);
+
+            foreach ($columns as $_column) {
+                $temp = explode(' ', $_column);
+                if (count($temp) === 2) {
+
+                    $_column = $temp[0];
+                    if (strtoupper(trim($temp[1])) === 'DESC') {
+                        $_column = '-' . $_column;
+                    }
+
+                    $this->_order[] = $_column;
+                } else {
+                    $this->_order[] = current($temp);
+                }
+            }
+        } else {
+            $this->_order[] = $column;
+        }
+
         return $this;
     }
 
@@ -1109,7 +1151,7 @@ class QueryBuilder
 
     public function getOrder()
     {
-        return [$this->_order, $this->_orderOptions];
+        return $this->_order;
     }
 
     public function buildOrder()
@@ -1135,17 +1177,6 @@ class QueryBuilder
                     $order[$this->applyTableAlias($newColumn)] = $direction;
                 }
             }
-        } else if (is_string($this->_order)) {
-            $columns = preg_split('/\s*,\s*/', $this->_order, -1, PREG_SPLIT_NO_EMPTY);
-            $order = array_map(function ($column) {
-                $temp = explode(' ', $column);
-                if (count($temp) === 2) {
-                    return $this->getAdapter()->quoteColumn($temp[0]) . ' ' . $temp[1];
-                }
-
-                return $this->getAdapter()->quoteColumn($column);
-            }, $columns);
-            $order = implode(', ', $order);
         } else {
             $order = $this->buildOrderJoin($this->_order);
         }

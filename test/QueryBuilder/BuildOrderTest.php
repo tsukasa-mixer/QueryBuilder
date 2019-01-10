@@ -19,7 +19,7 @@ class BuildOrderTest extends BaseTest
 
         $qb = $this->getQueryBuilder();
         $qb->setOrder('id, name');
-        $this->assertSql('ORDER BY `id`, `name`', $qb->buildOrder());
+        $this->assertSql('ORDER BY `id` ASC, `name` ASC', $qb->buildOrder());
     }
 
     public function testOrderEmpty()

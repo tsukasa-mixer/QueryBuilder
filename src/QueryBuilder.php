@@ -334,6 +334,11 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * @param string|IToSql $select
+     * @param null $alias
+     * @return $this
+     */
     public function addSelect($select, $alias = null)
     {
         if (is_string($select) && $newSelect = $this->getLookupBuilder()->buildJoin($this, $select)) {
@@ -348,7 +353,11 @@ class QueryBuilder
         return $this;
     }
 
-    public function setSelect($select)
+    /**
+     * @param array $select
+     * @return $this
+     */
+    public function setSelect(array $select)
     {
         $this->_select = [];
 
@@ -356,12 +365,8 @@ class QueryBuilder
             return $this;
         }
 
-        if (is_array($select)) {
-            foreach ($select as $key => $part) {
-                $this->addSelect($part, $key);
-            }
-        } else {
-            $this->addSelect($select);
+        foreach ($select as $key => $part) {
+            $this->addSelect($part, $key);
         }
 
         return $this;

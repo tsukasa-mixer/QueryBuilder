@@ -5,6 +5,7 @@ namespace Tsukasa\QueryBuilder;
 use Doctrine\DBAL\Driver\Connection;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
 use Tsukasa\QueryBuilder\Exception\QBException;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
@@ -707,11 +708,13 @@ class QueryBuilder
                 }
             }
 
-            if (count($parts) === 1) {
-                return $parts[0];
-            }
+            if ($parts) {
+                if (count($parts) === 1) {
+                    return $parts[0];
+                }
 
-            return '(' . implode(') ' . $operator . ' (', $parts) . ')';
+                return '(' . implode(') ' . $operator . ' (', $parts) . ')';
+            }
 
         } else if ($condition instanceof IToSql) {
             return $condition
@@ -938,7 +941,10 @@ class QueryBuilder
 
     public function buildHaving()
     {
-        return $this->getAdapter()->sqlHaving($this->_having, $this);
+        return $this->getAdapter()->sqlHaving(
+            $this->parseCondition($this->_having),
+            $this
+        );
     }
 
     public function buildLimitOffset()
@@ -979,10 +985,17 @@ class QueryBuilder
      */
     public function setHaving($having)
     {
-        if (!($having instanceof Q)) {
-            $having = new QAnd($having);
+        $this->_having = [];
+
+        return $this->addHaving($having);
+    }
+
+    public function addHaving($having)
+    {
+        if (!empty($having)) {
+            $this->_having[] = $having;
         }
-        $this->_having = $having;
+
         return $this;
     }
 

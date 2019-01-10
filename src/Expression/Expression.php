@@ -1,8 +1,6 @@
 <?php
 
-namespace Tsukasa\QueryBuilder;
-
-use Tsukasa\QueryBuilder\Expression\AbstractExpression;
+namespace Tsukasa\QueryBuilder\Expression;
 
 class Expression extends AbstractExpression
 {

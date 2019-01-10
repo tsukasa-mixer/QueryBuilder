@@ -2,10 +2,9 @@
 
 namespace Tsukasa\QueryBuilder;
 
-use Exception;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
-use Tsukasa\QueryBuilder\Q\Q;
 
 class BaseLookupCollection implements ILookupCollection
 {

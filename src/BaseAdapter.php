@@ -4,6 +4,7 @@ namespace Tsukasa\QueryBuilder;
 use Doctrine\DBAL\Connection;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
 use Tsukasa\QueryBuilder\Exception\QBException;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
@@ -264,11 +265,6 @@ abstract class BaseAdapter implements ISQLGenerator
         foreach ($columns as $i => $column) {
             if ($column instanceof Expression) {
                 $columns[$i] = $column->toSQL();
-            } else if (strpos($column, 'AS') !== false) {
-                if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)([\w\-_\.]+)$/', $column, $matches)) {
-                    list(, $rawColumn, $rawAlias) = $matches;
-                    $columns[$i] = $this->quoteColumn($rawColumn) . ' AS ' . $this->quoteColumn($rawAlias);
-                }
             } else if (strpos($column, '(') === false) {
                 $columns[$i] = $this->quoteColumn($column);
             }
@@ -684,6 +680,9 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     public function sqlHaving($having, QueryBuilder $queryBuilder = null)
     {
+
+        print_r($having);
+
         if (empty($having)) {
             return '';
         }

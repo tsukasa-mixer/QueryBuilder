@@ -11,7 +11,7 @@ namespace Tsukasa\Tests\QueryBuilder;
 use Tsukasa\QueryBuilder\Callbacks\AbstractJoinCallback;
 use Tsukasa\QueryBuilder\Aggregation\Max;
 use Tsukasa\QueryBuilder\Aggregation\Min;
-use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
 

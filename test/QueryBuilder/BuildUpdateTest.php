@@ -2,7 +2,7 @@
 
 namespace Tsukasa\Tests\QueryBuilder;
 
-use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Expression\Expression;
 
 class BuildUpdateTest extends BaseTest
 {

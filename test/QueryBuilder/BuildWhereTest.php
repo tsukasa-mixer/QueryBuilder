@@ -2,7 +2,7 @@
 
 namespace Tsukasa\Tests\QueryBuilder;
 
-use Tsukasa\QueryBuilder\Expression;
+use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Q\QAnd;
 use Tsukasa\QueryBuilder\Q\QAndNot;
 use Tsukasa\QueryBuilder\Q\QOr;

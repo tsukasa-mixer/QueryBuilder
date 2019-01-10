@@ -60,11 +60,11 @@ class QueryBuilder
      */
     private $_union = [];
     /**
-     * @var null|string|int
+     * @var null|int
      */
     private $_limit;
     /**
-     * @var null|string|int
+     * @var null|int
      */
     private $_offset;
     /**
@@ -354,7 +354,7 @@ class QueryBuilder
     }
 
     /**
-     * @param array $select
+     * @param array|string $select
      * @return $this
      */
     public function setSelect(array $select)
@@ -398,25 +398,48 @@ class QueryBuilder
      */
     public function paginate($page = 1, $pageSize = 10)
     {
-        $this->limit($pageSize);
-        $this->offset($page > 1 ? $pageSize * ($page - 1) : 0);
-        return $this;
-    }
+        $page = (int)$page;
+        $pageSize = (int)$pageSize;
 
-    public function limit($limit)
-    {
-        $this->_limit = $limit;
+        $this->setLimit($pageSize);
+        $this->setOffset($page > 1 ? $pageSize * ($page - 1) : 0);
         return $this;
     }
 
     /**
-     * @param $offset
+     * @param string|number $limit
      * @return $this
      */
-    public function offset($offset)
+    public function setLimit($limit)
     {
-        $this->_offset = $offset;
+        $this->_limit = (int)$limit;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->_limit;
+    }
+
+    /**
+     * @param string|number $offset
+     * @return $this
+     */
+    public function setOffset($offset)
+    {
+        $this->_offset = (int)$offset;
+        return $this;
+    }
+
+    /**
+     * @return int|string|null
+     */
+    public function getOffset()
+    {
+        return $this->_offset;
     }
 
     /**

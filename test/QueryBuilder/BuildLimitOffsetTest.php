@@ -9,15 +9,15 @@ class BuildLimitOffsetTest extends BaseTest
     public function testLimit()
     {
         $qb = $this->getQueryBuilder();
-        $qb->limit(10);
+        $qb->setLimit(10);
         $this->assertSql('LIMIT 10', $qb->buildLimitOffset());
     }
 
     public function testLimitOffset()
     {
         $qb = $this->getQueryBuilder();
-        $qb->limit(10);
-        $qb->offset(10);
+        $qb->setLimit(10);
+        $qb->setOffset(10);
         $this->assertSql('LIMIT 10 OFFSET 10', $qb->buildLimitOffset());
     }
 

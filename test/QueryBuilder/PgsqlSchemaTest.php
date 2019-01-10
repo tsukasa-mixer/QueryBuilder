@@ -8,7 +8,7 @@ class PgsqlSchemaTest extends SchemaTest
 
     public function testLimitOffset()
     {
-        $sql = $this->getQueryBuilder()->setFrom('profile')->offset(1)->toSQL();
+        $sql = $this->getQueryBuilder()->setFrom('profile')->setOffset(1)->toSQL();
         $this->assertEquals($this->quoteSql('SELECT * FROM "profile" LIMIT ALL OFFSET 1'), $sql);
     }
 

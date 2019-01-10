@@ -13,7 +13,7 @@ class BuildWhereTest extends BaseTest
     public function testHardSubQuery()
     {
         $subQuery = clone $this->getQueryBuilder();
-        $subQuery->setTypeSelect()->select(['parent_id'])->from('test')->addWhere([
+        $subQuery->setTypeSelect()->setSelect(['parent_id'])->from('test')->addWhere([
             'parent_id' => new Expression('`id`')
         ]);
         $this->assertSql('SELECT `parent_id` FROM `test` WHERE (`parent_id`=`id`)', $subQuery->toSQL());
@@ -21,7 +21,7 @@ class BuildWhereTest extends BaseTest
         $subQuery = clone $this->getQueryBuilder();
         $subQuery
             ->setTypeSelect()
-            ->select(['parent_id'])
+            ->setSelect(['parent_id'])
             ->from('test')
             ->setAlias('test_1')
             ->addWhere(['parent_id' => new Expression('`test_1`.`id`')]);
@@ -33,7 +33,7 @@ class BuildWhereTest extends BaseTest
         $subQuery = clone $this->getQueryBuilder();
         $subQuery
             ->setTypeSelect()
-            ->select(['parent_id'])
+            ->setSelect(['parent_id'])
             ->from('test')
             ->setAlias('test_1')
             ->addWhere(['parent_id' => new Expression('`test_1`.`id`')]);
@@ -42,7 +42,7 @@ class BuildWhereTest extends BaseTest
 
         $query = clone $this->getQueryBuilder();
         $query->setTypeSelect()
-            ->select(['id', 'root', 'lft', 'rgt', new Expression('`test_1`.`rgt`-`test_1`.`lft`-1 AS `move`')])
+            ->setSelect(['id', 'root', 'lft', 'rgt', new Expression('`test_1`.`rgt`-`test_1`.`lft`-1 AS `move`')])
             ->from('test')
             ->setAlias('test_1')
             ->addWhere(new QAndNot([
@@ -216,7 +216,7 @@ class BuildWhereTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->addWhere([
-            'id' => $this->getQueryBuilder()->select('id')->from('test')
+            'id' => $this->getQueryBuilder()->setSelect('id')->from('test')
         ]);
         $this->assertSql("WHERE (`id`=(SELECT `id` FROM `test`))", $qb->buildWhere());
     }

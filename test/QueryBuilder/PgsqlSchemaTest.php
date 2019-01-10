@@ -16,6 +16,6 @@ class PgsqlSchemaTest extends SchemaTest
     {
         $qb = $this->getQueryBuilder();
         $this->assertSql('SELECT * FROM "profile"', $qb->from('profile')->toSQL());
-        $this->assertSql('SELECT DISTINCT "description" FROM "profile"', $qb->select('description')->setOptions('DISTINCT')->from('profile')->toSQL());
+        $this->assertSql('SELECT DISTINCT "description" FROM "profile"', $qb->setSelect('description')->setOptions('DISTINCT')->from('profile')->toSQL());
     }
 }

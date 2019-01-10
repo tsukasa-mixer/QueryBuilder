@@ -6,8 +6,6 @@ use Tsukasa\QueryBuilder\Expression\AbstractExpression;
 
 abstract class Aggregation extends AbstractExpression
 {
-    protected $alias;
-
     protected $fields;
 
     protected $fieldsSql = '';
@@ -38,13 +36,7 @@ abstract class Aggregation extends AbstractExpression
 
     public function toSQL()
     {
-        $sql = $this->expression();
-
-        if ($this->getAlias()) {
-            $sql .= ' AS ' .  $this->quoteColumn($this->getAlias());
-        }
-
-        return $sql;
+        return $this->expression();
     }
 
     public function getField()
@@ -52,14 +44,8 @@ abstract class Aggregation extends AbstractExpression
         return $this->fields;
     }
 
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    public function __construct($field, $alias = '')
+    public function __construct($field)
     {
         $this->fields = $field;
-        $this->alias = $alias;
     }
 }

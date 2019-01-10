@@ -101,12 +101,12 @@ class BuildJoinTest extends BaseTest
     public function testJoinSubSelectString()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->from('user')->select('id');
+        $qbSub->from('user')->setSelect('id');
 
         $qb = $this->getQueryBuilder();
         $this->assertSql(
             'SELECT `c`.* FROM `comment` AS `c` INNER JOIN (SELECT `id` FROM `user`) AS `u` ON `u`.`id`=`c`.`user_id`',
-            $qb->select(['c.*'])->from(['c' => 'comment'])
+            $qb->setSelect(['c.*'])->from(['c' => 'comment'])
                 ->join('INNER JOIN', $qbSub->toSQL(), ['u.id' => 'c.user_id'], 'u')->toSQL()
         );
     }
@@ -114,12 +114,12 @@ class BuildJoinTest extends BaseTest
     public function testJoinSubSelect()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->from('user')->select('id');
+        $qbSub->from('user')->setSelect('id');
 
         $qb = $this->getQueryBuilder();
         $this->assertSql(
             'SELECT `c`.* FROM `comment` AS `c` INNER JOIN (SELECT `id` FROM `user`) AS `u` ON `u`.`id`=`c`.`user_id`',
-            $qb->select(['c.*'])->from(['c' => 'comment'])
+            $qb->setSelect(['c.*'])->from(['c' => 'comment'])
                 ->join('INNER JOIN', $qbSub, ['u.id' => 'c.user_id'], 'u')->toSQL()
         );
     }
@@ -128,7 +128,7 @@ class BuildJoinTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->getLookupBuilder()->setJoinCallback($this->joinCallback);
-        $qb->from('customer')->select(['user__id']);
+        $qb->from('customer')->setSelect(['user__id']);
         $this->assertSql('LEFT JOIN `user` AS `user_1` ON `user_1`.`id`=`customer`.`user_id`', $qb->buildJoin());
     }
 
@@ -136,9 +136,9 @@ class BuildJoinTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->getLookupBuilder()->setJoinCallback($this->joinCallback);
-        $qb->from('customer')->select([
-            new Min('user__id', 'id_min'),
-            new Max('user__id', 'id_max')
+        $qb->from('customer')->setSelect([
+            'id_min' => new Min('user__id'),
+            'id_max' => new Max('user__id'),
         ]);
         $this->assertSql('', $qb->buildJoin());
         $this->assertSql('SELECT MIN(`user_1`.`id`) AS `id_min`, MAX(`user_1`.`id`) AS `id_max` FROM `customer` LEFT JOIN `user` AS `user_1` ON `user_1`.`id`=`customer`.`user_id`', $qb->toSQL());

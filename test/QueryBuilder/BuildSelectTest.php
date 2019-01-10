@@ -45,7 +45,7 @@ class BuildSelectTest extends BaseTest
     public function testSelectExpression()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select([
+        $qb->setSelect([
             'id', 'root', 'lft', 'rgt',
             new Expression('`rgt`-`lft`-1 AS `move`')
         ]);
@@ -55,68 +55,68 @@ class BuildSelectTest extends BaseTest
     public function testArray()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(['id', 'name']);
+        $qb->setSelect(['id', 'name']);
         $this->assertSql($this->quoteSql('SELECT `id`, `name`'), $qb->buildSelect());
     }
 
     public function testString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('id, name');
+        $qb->setSelect('id, name');
         $this->assertSql('SELECT `id`, `name`', $qb->buildSelect());
     }
 
     public function testMultiple()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('id');
+        $qb->setSelect('id');
         $this->assertSql('SELECT `id`', $qb->buildSelect());
-        $qb->select('name');
+        $qb->setSelect('name');
         $this->assertSql('SELECT `name`', $qb->buildSelect());
     }
 
     public function testStringWithAlias()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('id AS foo, name AS bar');
+        $qb->setSelect('id AS foo, name AS bar');
         $this->assertSql('SELECT `id` AS `foo`, `name` AS `bar`', $qb->buildSelect());
     }
 
     public function testSubSelectString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('(SELECT `id` FROM `test`) AS `id_list`');
+        $qb->setSelect('(SELECT `id` FROM `test`) AS `id_list`');
         $this->assertSql('SELECT (SELECT `id` FROM `test`) AS `id_list`', $qb->buildSelect());
     }
 
     public function testAlias()
     {
         $qb = $this->getQueryBuilder();
-        $qb->setAlias('test1')->select(['id'])->from('test');
+        $qb->setAlias('test1')->setSelect(['id'])->from('test');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testAliasBackward()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(['id'])->from('test')->setAlias('test1');
+        $qb->setSelect(['id'])->from('test')->setAlias('test1');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testAliasFromString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select('id')->from('test')->setAlias('test1');
+        $qb->setSelect('id')->from('test')->setAlias('test1');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testSubSelect()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->select('id')->from('test');
+        $qbSub->setSelect('id')->from('test');
 
         $qb = $this->getQueryBuilder();
-        $qb->select(['test' => $qbSub->toSQL()]);
+        $qb->setSelect(['test' => $qbSub->toSQL()]);
         $this->assertSql(
             'SELECT (SELECT `id` FROM `test`) AS `test`',
             $qb->buildSelect()
@@ -126,10 +126,10 @@ class BuildSelectTest extends BaseTest
     public function testSubSelectAlias()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->select('id')->from('test');
+        $qbSub->setSelect('id')->from('test');
 
         $qb = $this->getQueryBuilder();
-        $qb->select(['id_list' => $qbSub->toSQL()]);
+        $qb->setSelect(['id_list' => $qbSub->toSQL()]);
         $this->assertSql(
             'SELECT (SELECT `id` FROM `test`) AS `id_list`',
             $qb->buildSelect()
@@ -140,7 +140,7 @@ class BuildSelectTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->getLookupBuilder()->setJoinCallback(new BuildSelectJoinCallback);
-        $qb->select(['user__username'])->from('customer');
+        $qb->setSelect(['user__username'])->from('customer');
 
         $this->assertSql(
             'SELECT `user1`.`username` FROM `customer` LEFT JOIN `user` AS `user1` ON `user1`.`id`=`customer`.`user_id`',
@@ -151,39 +151,39 @@ class BuildSelectTest extends BaseTest
     public function testCount()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(new Count('*', 'test'));
+        $qb->setSelect(['test' => new Count('*')]);
         $this->assertSql('SELECT COUNT(*) AS `test`', $qb->buildSelect());
 
         $qb = $this->getQueryBuilder();
-        $qb->select(new Count('*'));
+        $qb->setSelect(new Count('*'));
         $this->assertEquals('SELECT COUNT(*)', $qb->buildSelect());
     }
 
     public function testAvg()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(new Avg('*'));
+        $qb->setSelect(new Avg('*'));
         $this->assertEquals('SELECT AVG(*)', $qb->buildSelect());
     }
 
     public function testSum()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(new Sum('*'));
+        $qb->setSelect(new Sum('*'));
         $this->assertEquals('SELECT SUM(*)', $qb->buildSelect());
     }
 
     public function testMin()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(new Min('*'));
+        $qb->setSelect(new Min('*'));
         $this->assertEquals('SELECT MIN(*)', $qb->buildSelect());
     }
 
     public function testMax()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(new Max('*'));
+        $qb->setSelect(new Max('*'));
         $this->assertEquals('SELECT MAX(*)', $qb->buildSelect());
     }
 
@@ -196,7 +196,7 @@ class BuildSelectTest extends BaseTest
     public function testSelectDistinct()
     {
         $qb = $this->getQueryBuilder();
-        $qb->select(null)->setOptions('DISTINCT');
+        $qb->setSelect(null)->setOptions('DISTINCT');
         $this->assertEquals('SELECT DISTINCT *', $qb->buildSelect());
     }
 }

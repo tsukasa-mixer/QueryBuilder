@@ -245,11 +245,9 @@ class QueryBuilder
         if ($newSelect === false) {
             if (empty($tableAlias) || $rawColumn === '*') {
                 $columns = $rawColumn;
-            }
-            elseif (strpos($rawColumn, '.') !== false) {
+            } elseif (strpos($rawColumn, '.') !== false) {
                 $columns = $rawColumn;
-            }
-            else {
+            } else {
                 $columns = $tableAlias . '.' . $rawColumn;
             }
         } else {
@@ -295,6 +293,7 @@ class QueryBuilder
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function buildSelect()
     {
@@ -324,7 +323,7 @@ class QueryBuilder
         return $this->getAdapter()->sqlSelect($select, $this->_queryOptions);
     }
 
-    public function select($select)
+    public function setSelect($select)
     {
         if (empty($select)) {
             $this->_select = [];
@@ -657,19 +656,15 @@ class QueryBuilder
         $parts = [];
 
         if (is_array($condition)) {
-            foreach ($condition as $key => $value)
-            {
+            foreach ($condition as $key => $value) {
                 if (is_numeric($key)) {
                     if ($value instanceof IToSql) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    }
-                    elseif ($value instanceof QueryBuilder) {
+                    } elseif ($value instanceof QueryBuilder) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    }
-                    else if (is_array($value)) {
+                    } else if (is_array($value)) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    }
-                    else if (is_string($value)) {
+                    } else if (is_string($value)) {
                         $parts[] = $value;
                     }
                 } else {
@@ -687,11 +682,9 @@ class QueryBuilder
             $parts[] = $condition
                 ->setQb($this)
                 ->toSql();
-        }
-        else if ($condition instanceof QueryBuilder) {
+        } else if ($condition instanceof QueryBuilder) {
             $parts[] = $condition->toSQL();
-        }
-        else if (is_string($condition)) {
+        } else if (is_string($condition)) {
             $parts[] = $condition;
         }
 
@@ -699,7 +692,7 @@ class QueryBuilder
             return $parts[0];
         }
 
-        return '(' . implode(') '.$operator.' (', $parts) . ')';
+        return '(' . implode(') ' . $operator . ' (', $parts) . ')';
     }
 
     public function buildAndCondition($operator, $operands, &$params)
@@ -730,6 +723,15 @@ class QueryBuilder
     {
         if (!empty($condition)) {
             $this->_whereAnd[] = $condition;
+        }
+        return $this;
+    }
+
+    public function setWhere($condition)
+    {
+        $this->_whereAnd = [];
+        if (!empty($condition)) {
+            $this->_whereAnd[] = ['AND', $condition];
         }
         return $this;
     }
@@ -1057,11 +1059,7 @@ class QueryBuilder
     {
         foreach ($this->_select as $alias => $item)
         {
-            if (!is_numeric($alias) && $column == $alias) {
-                return true;
-            }
-
-            if (($item instanceof Aggregation) && $column == $item->getAlias()) {
+            if (!is_numeric($alias) && $column === $alias) {
                 return true;
             }
         }

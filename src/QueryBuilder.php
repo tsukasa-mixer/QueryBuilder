@@ -1044,13 +1044,9 @@ class QueryBuilder
     protected function applyTableAlias($column)
     {
         // If column already has alias - skip
-        if (strpos($column, '.') === false)
-        {
-            if (!$this->hasAliasedField($column))
-            {
-                $tableAlias = $this->getAlias();
-                return empty($tableAlias) ? $column : $tableAlias . '.' . $column;
-            }
+        if ((strpos($column, '.') === false) && !$this->hasAliasedField($column)) {
+            $tableAlias = $this->getAlias();
+            return $tableAlias === null ? $column : $tableAlias . '.' . $column;
         }
 
         return $column;
@@ -1075,7 +1071,7 @@ class QueryBuilder
      */
     protected function buildOrderJoin($order)
     {
-        if (strpos($order, '-', 0) === false) {
+        if (strpos($order, '-') === false) {
             $direction = 'ASC';
         } else {
             $direction = 'DESC';
@@ -1110,7 +1106,7 @@ class QueryBuilder
         if (is_array($this->_order)) {
             foreach ($this->_order as $column) {
                 if ($column instanceof Expression) {
-                    $order[$column->toSQL($this)] = '';
+                    $order[$column->toSQL()] = '';
                 }
                 else if ($column === '?') {
                     $order[] = $this->getAdapter()->getRandomOrder();
@@ -1123,7 +1119,7 @@ class QueryBuilder
             $columns = preg_split('/\s*,\s*/', $this->_order, -1, PREG_SPLIT_NO_EMPTY);
             $order = array_map(function ($column) {
                 $temp = explode(' ', $column);
-                if (count($temp) == 2) {
+                if (count($temp) === 2) {
                     return $this->getAdapter()->quoteColumn($temp[0]) . ' ' . $temp[1];
                 }
 
@@ -1175,7 +1171,7 @@ class QueryBuilder
 
     public function buildFrom()
     {
-        if (!empty($this->_alias) && !is_array($this->_from)) {
+        if ($this->_alias !== null && !is_array($this->_from)) {
             $from = [$this->_alias => $this->_from];
         } else {
             $from = $this->_from;

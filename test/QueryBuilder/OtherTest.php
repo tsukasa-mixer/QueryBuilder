@@ -16,7 +16,7 @@ class OtherTest extends BaseTest
     {
         // Проверка порядка генерирования ORDER BY и GROUP BY
         $qb = $this->getQueryBuilder();
-        $qb->setSelect('t.*')->from(['t' => 'comment'])->setGroup(['t.id'])->setOrder(['t.id']);
+        $qb->setSelect('t.*')->setFrom(['t' => 'comment'])->setGroup(['t.id'])->setOrder(['t.id']);
         $this->assertSql(
             'SELECT `t`.* FROM `comment` AS `t` GROUP BY `t`.`id` ORDER BY `t`.`id` ASC',
             $qb->toSQL()
@@ -28,7 +28,7 @@ class OtherTest extends BaseTest
         $sql = $this->getAdapter()->quoteSql('SELECT `a`, `b`, `c` FROM `test`');
 
         $qb = $this->getQueryBuilder();
-        $qb->setSelect('a, b, c')->from('test');
+        $qb->setSelect('a, b, c')->setFrom('test');
 
         $this->assertEquals($sql, $qb->toSQL());
         $copy = clone $qb;
@@ -68,7 +68,7 @@ class OtherTest extends BaseTest
         $qb = $this->getQueryBuilder();
         $this->assertEquals(
             $this->quoteSql('DELETE FROM `test` WHERE (`name`=\'qwe\')'),
-            $qb->setTypeDelete()->addWhere(['name' => 'qwe'])->from('test')->toSQL()
+            $qb->setTypeDelete()->addWhere(['name' => 'qwe'])->setFrom('test')->toSQL()
         );
     }
 }

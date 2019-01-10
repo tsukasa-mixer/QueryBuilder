@@ -92,28 +92,28 @@ class BuildSelectTest extends BaseTest
     public function testAlias()
     {
         $qb = $this->getQueryBuilder();
-        $qb->setAlias('test1')->setSelect(['id'])->from('test');
+        $qb->setAlias('test1')->setSelect(['id'])->setFrom('test');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testAliasBackward()
     {
         $qb = $this->getQueryBuilder();
-        $qb->setSelect(['id'])->from('test')->setAlias('test1');
+        $qb->setSelect(['id'])->setFrom('test')->setAlias('test1');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testAliasFromString()
     {
         $qb = $this->getQueryBuilder();
-        $qb->setSelect('id')->from('test')->setAlias('test1');
+        $qb->setSelect('id')->setFrom('test')->setAlias('test1');
         $this->assertSql('SELECT `test1`.`id`', $qb->buildSelect());
     }
 
     public function testSubSelect()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->setSelect('id')->from('test');
+        $qbSub->setSelect('id')->setFrom('test');
 
         $qb = $this->getQueryBuilder();
         $qb->setSelect(['test' => $qbSub->toSQL()]);
@@ -126,7 +126,7 @@ class BuildSelectTest extends BaseTest
     public function testSubSelectAlias()
     {
         $qbSub = $this->getQueryBuilder();
-        $qbSub->setSelect('id')->from('test');
+        $qbSub->setSelect('id')->setFrom('test');
 
         $qb = $this->getQueryBuilder();
         $qb->setSelect(['id_list' => $qbSub->toSQL()]);
@@ -140,7 +140,7 @@ class BuildSelectTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->getLookupBuilder()->setJoinCallback(new BuildSelectJoinCallback);
-        $qb->setSelect(['user__username'])->from('customer');
+        $qb->setSelect(['user__username'])->setFrom('customer');
 
         $this->assertSql(
             'SELECT `user1`.`username` FROM `customer` LEFT JOIN `user` AS `user1` ON `user1`.`id`=`customer`.`user_id`',

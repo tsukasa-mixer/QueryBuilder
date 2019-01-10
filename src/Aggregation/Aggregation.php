@@ -44,6 +44,10 @@ abstract class Aggregation extends AbstractExpression
         return $this->fields;
     }
 
+    /**
+     * Aggregation constructor.
+     * @param string $field
+     */
     public function __construct($field)
     {
         $this->fields = $field;

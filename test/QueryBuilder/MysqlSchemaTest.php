@@ -8,7 +8,7 @@ class MysqlSchemaTest extends SchemaTest
 
     public function testLimitOffset()
     {
-        $sql = $this->getQueryBuilder()->from('profile')->offset(1)->toSQL();
+        $sql = $this->getQueryBuilder()->setFrom('profile')->offset(1)->toSQL();
         $this->assertEquals($this->quoteSql('SELECT * FROM `profile` LIMIT 1, 18446744073709551615'), $sql);
     }
 }

@@ -60,7 +60,7 @@ class CloneTest extends BaseTest
     {
         $qb = $this->getQueryBuilder();
         $qb->getLookupBuilder()->setColumnCallback(new CloneColumnCallback);
-        $qb->from('user')->addWhere(['test__id' => 1])->setAlias('user_1');
+        $qb->setFrom('user')->addWhere(['test__id' => 1])->setAlias('user_1');
         $sql = 'SELECT `user_1`.* FROM `user` AS `user_1` LEFT JOIN `test` AS `test_1` ON `test_1`.`id`=`user_1`.`user_id` WHERE (`user_1`.`id`=1)';
 
         $clone = clone $qb;

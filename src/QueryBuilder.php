@@ -472,8 +472,8 @@ class QueryBuilder
      */
     public function join($joinType, $tableName, array $on = [], $alias = null)
     {
-        if (is_string($joinType) && empty($tableName)) {
-            $this->_join[] = $this->getAdapter()->quoteSql($joinType);
+        if ($joinType === 'RAW' && !empty($tableName)) {
+            $this->_join[] = $this->getAdapter()->quoteSql($tableName);
         } else if ($tableName instanceof QueryBuilder) {
             $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
         } else {
@@ -492,10 +492,9 @@ class QueryBuilder
      * @param string $alias
      * @return $this
      */
-    public function joinRaw($sql)
+    public function joinRaw($sql, $alias = null)
     {
-        $this->_join[] = $this->getAdapter()->quoteSql($sql);
-        return $this;
+        return $this->join('RAW', $sql, [], $alias);
     }
 
     /**

@@ -20,7 +20,8 @@
     }
   ],
   "require": {
-    "doctrine/dbal": "^2.5"
+    "doctrine/dbal": "^2.5",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "*",

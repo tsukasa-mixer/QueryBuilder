@@ -83,8 +83,6 @@ class QueryBuilder
      * @var array
      */
     private $_update = [];
-
-    protected $tablePrefix = '';
     /**
      * @var BaseAdapter
      */
@@ -257,7 +255,7 @@ class QueryBuilder
         $fieldsSql = $this->getAdapter()->buildColumns($columns);
         $aggregation->setFieldSql($fieldsSql);
 
-        return $this->getAdapter()->quoteSql($aggregation->setQb($this)->toSQL());
+        return $aggregation->setQB($this)->toSQL();
     }
 
     /**
@@ -325,6 +323,16 @@ class QueryBuilder
 
     protected function pushToSelect($select, $alias = null)
     {
+        $isValid = is_string($select)
+            || (is_numeric($select) && is_finite($select))
+            || is_a($select, Expression::class)
+            || is_a($select, Aggregation::class)
+        ;
+
+        if (!$isValid) {
+            throw new QBException('Incorrect select');
+        }
+
         if ($alias) {
             $this->_select[$alias] = $select;
         } else {

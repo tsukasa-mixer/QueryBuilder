@@ -1,8 +1,9 @@
 <?php
 namespace Tsukasa\QueryBuilder;
 
-use Exception;
+use Doctrine\DBAL\Connection;
 use Tsukasa\QueryBuilder\Aggregation\Aggregation;
+use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
@@ -12,7 +13,7 @@ abstract class BaseAdapter implements ISQLGenerator
     /**
      * @var string
      */
-    protected $tablePrefix = '';
+    protected $tablePrefix;
     /**
      * @var null|\PDO
      */
@@ -82,14 +83,17 @@ abstract class BaseAdapter implements ISQLGenerator
     {
         if (strpos($name, '{{') !== false) {
             $name = preg_replace('/\\{\\{(.*?)\\}\\}/', '\1', $name);
-            return str_replace('%', $this->getTablePrefix(), $name);
-        } else {
-            return $name;
+
+            if (strpos($name, '%') !== false) {
+                return str_replace('%', $this->getTablePrefix() ?: '', $name);
+            }
         }
+
+        return $name;
     }
 
     /**
-     * @return null|\PDO
+     * @return null|\PDO|Connection
      */
     public function getDriver()
     {
@@ -97,12 +101,16 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @param $pdo
+     * @param \PDO|Connection $driver
      * @return $this
      */
-    public function setDriver($pdo)
+    public function setDriver($driver)
     {
-        $this->driver = $pdo;
+        if (!($driver instanceof \PDO || $driver instanceof Connection)) {
+            throw new QBException('Drive must be instance PDO or '. Connection::class);
+        }
+
+        $this->driver = $driver;
         return $this;
     }
 
@@ -384,7 +392,7 @@ abstract class BaseAdapter implements ISQLGenerator
      * @param $union
      * @param string $options
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function generateSelectSQL($select, $from, $where, $order, $group, $limit, $offset, $join, $having, $union, $options = '')
     {
@@ -658,9 +666,9 @@ abstract class BaseAdapter implements ISQLGenerator
 
         if (strpos($tableName, 'SELECT') !== false) {
             return $joinType . ' (' . $this->quoteSql($tableName) . ')' . (empty($alias) ? '' : ' AS ' . $this->quoteColumn($alias)) . ' ON ' . implode(' and ', $onSQL);
-        } else {
-            return $joinType . ' ' . $this->quoteTableName($tableName) . (empty($alias) ? '' : ' AS ' . $this->quoteColumn($alias)) . ' ON ' . implode(' and ', $onSQL);
         }
+
+        return $joinType . ' ' . $this->quoteTableName($tableName) . (empty($alias) ? '' : ' AS ' . $this->quoteColumn($alias)) . ' ON ' . implode(' and ', $onSQL);
     }
 
     /**

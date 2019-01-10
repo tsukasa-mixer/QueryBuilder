@@ -48,7 +48,7 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     public function quoteColumn($name)
     {
-        if (strpos($name, '(') !== false || strpos($name, '[[') !== false || strpos($name, '{{') !== false) {
+        if (strpos($name, '(') !== false) {
             return $name;
         }
         if (($pos = strrpos($name, '.')) !== false) {
@@ -396,15 +396,8 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     public function generateSelectSQL($select, $from, $where, $order, $group, $limit, $offset, $join, $having, $union, $options = '')
     {
-        if (empty($order)) {
-            $orderColumns = [];
-            $orderOptions = null;
-        } else {
-            list($orderColumns, $orderOptions) = $order;
-        }
-
         $where = $this->sqlWhere($where);
-        $orderSql = $this->sqlOrderBy($orderColumns, $orderOptions);
+        $orderSql = $this->sqlOrderBy($order);
         $unionSql = $this->sqlUnion($union);
 
         return strtr('{select}{from}{join}{where}{group}{having}{order}{limit_offset}{union}', [
@@ -767,42 +760,18 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      * @param null $options
      * @return string
      */
-    public function sqlOrderBy($columns, $options = null)
+    public function sqlOrderBy(array $columns, $options = null)
     {
         if (empty($columns)) {
             return '';
         }
 
-        if (is_string($columns)) {
-            $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
-            $quotedColumns = array_map(function ($column) {
-                $temp = explode(' ', $column);
-                if (count($temp) === 2) {
-                    return $this->quoteColumn($temp[0]) . ' ' . $temp[1];
-                }
-
-                return $this->quoteColumn($column);
-            }, $columns);
-            return implode(', ', $quotedColumns);
-        }
-
         $order = [];
-        foreach ($columns as $key => $column) {
-            if (is_numeric($key)) {
-                if (strpos($column, '-', 0) === 0) {
-                    $column = substr($column, 1);
-                    $direction = 'DESC';
-                } else {
-                    $direction = 'ASC';
-                }
-            } else {
-                $direction = $column;
-                $column = $key;
-            }
+        foreach ($columns as $column => $direction) {
 
             $order[] = $this->quoteColumn($column) . ' ' . $direction;
         }

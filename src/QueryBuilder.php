@@ -1178,10 +1178,10 @@ class QueryBuilder
                 }
             }
         } else {
-            $order = $this->buildOrderJoin($this->_order);
+            $order[] = $this->buildOrderJoin($this->_order);
         }
 
-        $sql = $this->getAdapter()->sqlOrderBy($order, $this->_orderOptions);
+        $sql = $this->getAdapter()->sqlOrderBy($order);
         return empty($sql) ? '' : ' ORDER BY ' . $sql;
     }
 

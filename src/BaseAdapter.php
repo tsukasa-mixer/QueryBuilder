@@ -683,9 +683,6 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     public function sqlHaving($having, QueryBuilder $queryBuilder = null)
     {
-
-        print_r($having);
-
         if (empty($having)) {
             return '';
         }

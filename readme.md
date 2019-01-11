@@ -9,7 +9,7 @@
 composer require tsukasa/query_builder
 ```
 
-#Basic usage
+# Basic usage
 
 Detail doc:
 - [RUS](doc/ru/main.md)

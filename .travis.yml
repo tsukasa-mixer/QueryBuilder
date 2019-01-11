@@ -9,22 +9,21 @@ php:
   - 7.2
   - 7.3
 
+matrix:
   allow_failures:
     - php: 5.4
     - php: 5.5
 
+services:
+  - mysql
+  - postgresql
+  
 install: composer install
 
 before_script:
   - composer global require satooshi/php-coveralls
   - mysql -u root -e 'CREATE DATABASE test;'
   - psql -c 'create database test;' -U postgres
-
-services:
-  - mysql
-  - postgresql
-
-matrix:
 
 script:
   - mkdir -p build/logs

@@ -157,7 +157,7 @@ class QueryBuilder
 
         $lookupBuilder = $lookupBuilder ?: new LookupBuilder();
         $lookupBuilder->addLookupCollection($adapter->getLookupCollection());
-        return new QueryBuilder($connection, $adapter, $lookupBuilder);
+        return new static($connection, $adapter, $lookupBuilder);
     }
 
     /**
@@ -258,7 +258,7 @@ class QueryBuilder
      * @return string
      * @throws \Exception
      */
-    public function buildSelect()
+    protected function buildSelect()
     {
         if (empty($this->_select)) {
             $this->_select = ['*'];
@@ -612,7 +612,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function buildCondition($condition, &$params = [])
+    protected function buildCondition($condition, &$params = [])
     {
         if (!is_array($condition)) {
             return (string)$condition;
@@ -696,7 +696,7 @@ class QueryBuilder
         return '';
     }
 
-    public function buildAndCondition($operator, $operands, &$params)
+    protected function buildAndCondition($operator, $operands, &$params)
     {
         $parts = [];
         foreach ($operands as $operand) {
@@ -757,7 +757,7 @@ class QueryBuilder
     /**
      * @return array
      */
-    public function buildWhereTree()
+    protected function buildWhereTree()
     {
         $where = [];
         foreach ($this->_whereAnd as $condition) {
@@ -783,7 +783,7 @@ class QueryBuilder
         return $this->_select;
     }
 
-    public function buildWhere()
+    protected function buildWhere()
     {
         $params = [];
         $sql = $this->buildCondition($this->buildWhereTree(), $params);
@@ -870,7 +870,7 @@ class QueryBuilder
         throw new QBException('Unknown query type');
     }
 
-    public function buildHaving()
+    protected function buildHaving()
     {
         return $this->getAdapter()->sqlHaving(
             $this->parseCondition($this->_having),
@@ -878,12 +878,12 @@ class QueryBuilder
         );
     }
 
-    public function buildLimitOffset()
+    protected function buildLimitOffset()
     {
         return $this->getAdapter()->sqlLimitOffset($this->_limit, $this->_offset);
     }
 
-    public function buildUnion()
+    protected function buildUnion()
     {
         $sql = '';
         foreach ($this->_union as  list($union, $all)) {
@@ -1058,7 +1058,7 @@ class QueryBuilder
         return $column;
     }
 
-    public function buildJoin()
+    protected function buildJoin()
     {
         if (empty($this->_join)) {
             return '';
@@ -1098,7 +1098,7 @@ class QueryBuilder
         return $this->_order;
     }
 
-    public function buildOrder()
+    protected function buildOrder()
     {
         /**
          * не делать проверку по empty(), проваливается половина тестов с ORDER BY
@@ -1150,7 +1150,7 @@ class QueryBuilder
         return $group;
     }
 
-    public function buildGroup()
+    protected function buildGroup()
     {
         $group = [];
         if ($this->_group) {
@@ -1164,7 +1164,7 @@ class QueryBuilder
         return empty($sql) ? '' : ' GROUP BY ' . $sql;
     }
 
-    public function buildFrom()
+    protected function buildFrom()
     {
         if ($this->_alias !== null && !is_array($this->_from)) {
             $from = [$this->_alias => $this->_from];

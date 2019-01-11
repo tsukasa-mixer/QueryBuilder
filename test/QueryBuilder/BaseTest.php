@@ -6,6 +6,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\Tests\QueryBuilder\fixtures\TestQueryBuilder;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -92,11 +93,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return QueryBuilder
+     * @return QueryBuilder|TestQueryBuilder
      */
     protected function getQueryBuilder()
     {
-        return QueryBuilder::getInstance($this->getConnection());
+        return  TestQueryBuilder::getInstance($this->getConnection());
     }
 
     /**

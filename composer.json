@@ -26,7 +26,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "*",
-    "phpunit/php-code-coverage": "^4"
+    "phpunit/php-code-coverage": "^4",
+    "satooshi/php-coveralls": "*"
   },
   "autoload": {
     "psr-4": {

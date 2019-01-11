@@ -35,6 +35,6 @@ $qb->setTypeSelect()
     ->setWhere(['id__gte' => 1])
     ->setOrder(['created_at']);
 
-$connection->query($qb->toSQL())->fetchAll();
+$connection->fetchAll($qb->toSQL());
 // SELECT * FROM comment WHERE id >= 1 ORDER BY created_at ASC
 ```

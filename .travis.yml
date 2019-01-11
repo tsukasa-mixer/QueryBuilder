@@ -10,13 +10,8 @@ php:
   - 7.3
 
   allow_failures:
-    - php: hhvm
     - php: 5.4
     - php: 5.5
-
-  exclude:
-    - php: hhvm
-      env: DB=pgsql  # PDO driver for pgsql is unsupported by HHVM (3rd party install for support)
 
 install: composer install
 

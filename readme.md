@@ -1,86 +1,45 @@
 [![Build](https://travis-ci.org/tsukasa-mixer/QueryBuilder.svg?branch=master)](https://packagist.org/packages/tsukasa/query_builder)
 [![Latest Stable Version](https://poser.pugx.org/tsukasa/query_builder/v/stable)](https://packagist.org/packages/tsukasa/query_builder)
 [![Total Downloads](https://poser.pugx.org/tsukasa/query_builder/downloads)](https://packagist.org/packages/tsukasa/query_builder)
-[![License](https://poser.pugx.org/tsukasa/query_builder/license)](https://packagist.org/packages/tsukasa/query_builder)
+[![License](https://poser.pugx.org/tsukasa/query_builder/license)](https://github.com/tsukasa/query_builder)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder?ref=badge_shield)
 
-# API
-
-## Установка
-
+# Setup
 ```
 composer require tsukasa/query_builder
 ```
 
-Пример использования
+#Basic usage
+
+Detail doc:
+- [RUS](doc/ru/main.md)
 
 ```php
+use Tsukasa\QueryBuilder\QueryBuilder
+
 require('vendor/autoload.php'); // Composer autoloader
 
-use Tsukasa\QueryBuilder\QueryFactory;
-use Tsukasa\QueryBuilder\Mysql\Adapter;
-use Tsukasa\QueryBuilder\LegacyLookupBuilder;
+$connection = DriverManager::getConnection([
+        'dbname' => 'mydb',
+        'user' => 'user',
+        'password' => 'secret',
+        'host' => 'localhost',
+        'driver' => 'pdo_mysql',
+    ], 
+    $config = new \Doctrine\DBAL\Configuration()
+);
 
-$pdo = new PDO(...);
-// PDO является не обязательным, используется для экранирования
-$factory = new QueryFactory(new Adapter($pdo), new LegacyLookupBuilder);
 
-$qb = $factory->getQueryBuilder();
-$qb->setTypeSelect()->setFrom('test')->setSelect('*');
-echo $qb->toSQL();
-// Output: SELECT * FROM `test`
+$qb = QueryBuilder::getInstance($connection);
+$qb->setTypeSelect()
+    ->setSelect('*')
+    ->setFrom('comment')
+    ->setWhere(['id__gte' => 1])
+    ->setOrder(['created_at']);
+
+$connection->query($qb->toSQL())->fetchAll();
+// SELECT * FROM comment WHERE id >= 1 ORDER BY created_at ASC
 ```
-
-## Добавление lookup'ов
-
-```php
-$lookups = [
-	'foo' => function (IAdapter $adapter, $column, $value) {
-		return $adapter->quoteColumn($column) . ' ??? ' . $adapter->quoteValue($value);
-	}
-];
-$factory = new QueryFactory(new Adapter($pdo, $lookups), new LegacyLookupBuilder);
-$qb = $factory->getQueryBuilder()->setTypeSelect()->setSelect('*')->setFrom('test')->setWhere([
-	'name__foo' => 1
-]);
-echo $qb->toSQL();
-// Output: SELECT * FROM `test` WHERE `name` ??? 1
-```
-
-## Lookup
-
-| Lookup | SQL | PHP |
-|-----|----|----|
-| raw | ```foo REGEX ?``` | ```$qb->setWhere(['foo__raw' => 'REGEX ?')``` |
-| range | ```foo BETWEEN 1 AND 2``` | ```$qb->setWhere(['foo__range' => [1,2])``` |
-| in | ```foo IN (1,2)``` | ```$qb->setWhere(['foo__in' => [1,2])``` |
-| iendswith | ```lower(foo) LIKE %bar``` | ```$qb->setWhere(['foo__iendswith' => 'BAR'])``` |
-| endswith | ```foo LIKE %bar``` | ```$qb->setWhere(['foo__endswith' => 'bar'])``` |
-| istartswith | ```lower(foo) LIKE bar%``` | ```$qb->setWhere(['foo__istartswith' => 'BAR'])``` |
-| startswith | ```foo LIKE bar%``` | ```$qb->setWhere(['foo__startswith' => 'bar'])``` |
-| icontains | ```lower(foo) LIKE %bar%``` | ```$qb->setWhere(['foo__icontains' => 'BAR'])``` |
-| contains | ```foo LIKE % bar%``` | ```$qb->setWhere(['foo__contains' => 'bar'])``` |
-| exact | ```foo = 10``` | ```$qb->setWhere(['foo' => 10])``` |
-| gte | ```foo >= 10``` | ```$qb->setWhere(['foo__gte' => 10])``` |
-| gt | ```foo > 10``` | ```$qb->setWhere(['foo__gt' => 10])``` |
-| lte | ```foo <= 10``` | ```$qb->setWhere(['foo__lte' => 10])``` |
-| lt | ```foo < 10``` | ```$qb->setWhere(['foo__lt' => 10])``` |
-| isnull | ```foo IS NOT NULL``` | ```$qb->setWhere(['foo__isnull' => false])``` |
-
-## LookupBuilder
-
-```php
-$qb = new QueryBuilder(new MysqlAdapter($pdo), new LookupBuilder);
-$qb
-	->setTypeSelect()
-	->setSelect('*')
-	->setFrom('comment')
-	->setWhere(['id' => ['gte' => 1]])
-	->setOrder(['created_at']);
-$pdo->query($qb->toSQL())->fetchAll();
-```
- year, week_day, minute, hour` работают только в режиме `exact`.
-
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftsukasa-mixer%2FQueryBuilder?ref=badge_large)

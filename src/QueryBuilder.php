@@ -583,7 +583,7 @@ class QueryBuilder
      */
     public function insert($tableName, $rows)
     {
-        return $this->getAdapter()->generateInsertSQL($tableName, $rows, $this->_queryOptions);
+        return $this->getAdapter()->sqlInsert($tableName, $rows, $this->_queryOptions);
     }
 
     /**

@@ -9,6 +9,10 @@
          stopOnFailure="false"
          bootstrap="vendor/autoload.php">
 
+    <php>
+        <ini name="error_reporting" value="32767"/>
+    </php>
+
     <testsuites>
         <testsuite name="All">
             <directory>./test/</directory>
@@ -20,6 +24,12 @@
             <group>benchmark</group>
         </exclude>
     </groups>
+
+    <filter>
+        <whitelist>
+            <directory>./src/</directory>
+        </whitelist>
+    </filter>
 
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>

@@ -828,16 +828,11 @@ abstract class BaseAdapter implements ISQLGenerator
                     $newSelect = [];
 
                     foreach (explode(',', $column) as $item) {
-                        // if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)([\w\-_\.]+)$/', $item, $matches)) {
-                        //     list(, $rawColumn, $rawAlias) = $matches;
-                        // }
+                        $rawColumn = $item;
+                        $rawAlias = '';
 
                         if (strpos($item, 'AS') !== false) {
                             list($rawColumn, $rawAlias) = explode('AS', $item);
-                        }
-                        else {
-                            $rawColumn = $item;
-                            $rawAlias = '';
                         }
 
                         $_v = $this->quoteColumn(trim($rawColumn));

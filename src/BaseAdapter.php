@@ -792,15 +792,8 @@ abstract class BaseAdapter implements ISQLGenerator
 
         $select = [];
         foreach ($columns as $column => $expr) {
-            if (is_object($expr)) {
-                if ($expr instanceof QueryBuilder) {
-                    $subQuery = $expr->toSQL();
-                }
-                else if ($expr instanceof Expression) {
-                    $subQuery = $this->quoteSql($expr->toSQL());
-                }
-
-                $value = $this->quoteColumn($subQuery);
+            if ($expr instanceof IToSql) {
+                $value = $this->quoteColumn($expr->toSql());
 
                 if (!is_numeric($column)) {
                     $value .= ' AS ' . $this->quoteColumn($column);

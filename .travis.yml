@@ -26,9 +26,9 @@ install: composer install --dev
 before_script:
   - mysql -u root -e 'CREATE DATABASE test;'
   - psql -c 'create database test;' -U postgres
+  - mkdir -p build/logs
 
 script:
-  - mkdir -p build/logs
   - php vendor/bin/phpunit -c phpunit.xml.dist
 
 after_success:

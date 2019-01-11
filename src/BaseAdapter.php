@@ -624,32 +624,43 @@ abstract class BaseAdapter implements ISQLGenerator
      * @param $alias string
      * @return string
      */
-    public function sqlJoin($joinType, $tableName, $on, $alias)
+    public function sqlJoin($joinType, $tableName, $on = [], $alias = null, $index = null)
     {
-        if (is_string($tableName)) {
-            $tableName = $this->getRawTableName($tableName);
+        $toSql = [$joinType];
+        if (is_string($tableName) && $tableName = $this->getRawTableName($tableName)) {
+            if (strpos($tableName, 'SELECT') !== false) {
+                $toSql[] = '(' . $this->quoteSql($tableName) . ')' ;
+            } else {
+                $toSql[]  = $this->quoteTableName($tableName);
+            }
         } else if ($tableName instanceof QueryBuilder) {
-            $tableName = $tableName->toSQL();
+            $toSql[] =  '(' . $this->quoteSql($tableName->toSQL()) . ')' ;
+        } else {
+            throw new QBException('Incorrect table name');
         }
 
-        $onSQL = [];
-        if (is_string($on)) {
-            $onSQL[] = $this->quoteSql($on);
-        } else {
-            foreach ($on as $leftColumn => $rightColumn) {
-                if ($rightColumn instanceof Expression) {
-                    $onSQL[] = $this->quoteColumn($leftColumn) . '=' . $this->quoteSql($rightColumn->toSQL());
-                } else {
-                    $onSQL[] = $this->quoteColumn($leftColumn) . '=' . $this->quoteColumn($rightColumn);
+        if ($alias) {
+            $toSql[] = 'AS ' . $this->quoteColumn($alias);
+        }
+
+        if ($on) {
+            $onSQL = [];
+            if (is_string($on)) {
+                $onSQL[] = $this->quoteSql($on);
+            } else {
+                foreach ($on as $leftColumn => $rightColumn) {
+                    if ($rightColumn instanceof Expression) {
+                        $onSQL[] = $this->quoteColumn($leftColumn) . '=' . $this->quoteSql($rightColumn->toSQL());
+                    } else {
+                        $onSQL[] = $this->quoteColumn($leftColumn) . '=' . $this->quoteColumn($rightColumn);
+                    }
                 }
             }
+
+            $toSql[] = 'ON ' . implode(' and ', $onSQL);
         }
 
-        if (strpos($tableName, 'SELECT') !== false) {
-            return $joinType . ' (' . $this->quoteSql($tableName) . ')' . (empty($alias) ? '' : ' AS ' . $this->quoteColumn($alias)) . ' ON ' . implode(' and ', $onSQL);
-        }
-
-        return $joinType . ' ' . $this->quoteTableName($tableName) . (empty($alias) ? '' : ' AS ' . $this->quoteColumn($alias)) . ' ON ' . implode(' and ', $onSQL);
+        return implode(' ', $toSql);
     }
 
     /**

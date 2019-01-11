@@ -445,17 +445,17 @@ class QueryBuilder
     }
 
     /**
-     * @param $joinType string LEFT JOIN, RIGHT JOIN, etc...
-     * @param $tableName string
+     * @param string $joinType  LEFT JOIN, RIGHT JOIN, etc...
+     * @param string|QueryBuilder $tableName
      * @param array $on link columns
-     * @param string $alias string
+     * @param string|null $alias string
+     * @param string|null $index
      * @return $this
-     * @throws QBException
      */
-    public function join($joinType, $tableName, array $on = [], $alias = null)
+    public function join($joinType, $tableName, array $on = [], $alias = null, $index = null)
     {
         if ($tableName instanceof QueryBuilder) {
-            $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
+            $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias, $index);
         } else {
             if ($joinType === 'RAW' && !empty($tableName)) {
                 $join = $this->getAdapter()->quoteSql($tableName);

@@ -25,6 +25,10 @@
         <whitelist>
             <directory>./src/</directory>
         </whitelist>
+
+        <blacklist>
+            <directory>./test/</directory>
+        </blacklist>
     </filter>
 
     <logging>

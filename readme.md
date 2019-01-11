@@ -4,7 +4,7 @@
 * **Syntax:** Django-like lookups
 * **Documentation:** **[Russian](./docs/ru/readme.md)**
 * **PHP version:** 5.6+
-* **State:** [![Build](https://travis-ci.org/tsukasa-mixer/QueryBuilder.svg?branch=master)](https://packagist.org/packages/tsukasa/query_builder) [![Coverage Status](https://coveralls.io/repos/tsukasa-mixer/QueryBuilder/badge.svg?branch=master)](https://coveralls.io/r/tsukasa-mixer/QueryBuilder?branch=master)
+* **State:** [![Build](https://travis-ci.org/tsukasa-mixer/QueryBuilder.svg?branch=master)](https://packagist.org/packages/tsukasa/query_builder) [![Coverage Status](https://coveralls.io/repos/github/tsukasa-mixer/QueryBuilder/badge.svg?branch=master)](https://coveralls.io/github/tsukasa-mixer/QueryBuilder?branch=master)
 * **Version:** [![Latest Stable Version](https://poser.pugx.org/tsukasa/query_builder/v/stable)](https://packagist.org/packages/tsukasa/query_builder)
 * **Packagist:** [tsukasa/QueryBuilder](https://packagist.org/packages/tsukasa/query_builder) [![Total Downloads](https://poser.pugx.org/tsukasa/query_builder/downloads)](https://packagist.org/packages/tsukasa/query_builder)
 * **Composer:** `composer require tsukasa/query_builder`

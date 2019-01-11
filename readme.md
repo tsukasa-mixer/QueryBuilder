@@ -1,7 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/tsukasa/query_builder/v/stable)](https://packagist.org/packages/tsukasa/query_builder)
 [![Total Downloads](https://poser.pugx.org/tsukasa/query_builder/downloads)](https://packagist.org/packages/tsukasa/query_builder)
 [![Build](https://travis-ci.org/tsukasa-mixer/QueryBuilder.svg?branch=master)](https://packagist.org/packages/tsukasa/query_builder) 
-[![Coverage Status](https://coveralls.io/repos/github/tsukasa-mixer/QueryBuilder/badge.svg?branch=master)](https://coveralls.io/github/tsukasa-mixer/QueryBuilder?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/tsukasa-mixer/QueryBuilder/badge.svg)](https://coveralls.io/github/tsukasa-mixer/QueryBuilder)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/tsukasa-mixer/QueryBuilder/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tsukasa-mixer/QueryBuilder/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tsukasa-mixer/QueryBuilder/?branch=master)
 

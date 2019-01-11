@@ -854,17 +854,16 @@ class QueryBuilder
      */
     public function toSQL()
     {
-        $type = $this->getType();
-        if ($type === self::TYPE_SELECT) {
-            return $this->generateSelectSql();
-        }
+        switch ($this->getType())
+        {
+            case self::TYPE_SELECT:
+                return $this->generateSelectSql();
 
-        if ($type === self::TYPE_UPDATE) {
-            return $this->generateUpdateSql();
-        }
+            case self::TYPE_UPDATE:
+                return $this->generateUpdateSql();
 
-        if ($type === self::TYPE_DELETE) {
-            return $this->generateDeleteSql();
+            case self::TYPE_DELETE:
+                return $this->generateDeleteSql();
         }
 
         throw new QBException('Unknown query type');
@@ -880,7 +879,10 @@ class QueryBuilder
 
     protected function buildLimitOffset()
     {
-        return $this->getAdapter()->sqlLimitOffset($this->_limit, $this->_offset);
+        return $this->getAdapter()->sqlLimitOffset(
+            $this->_limit,
+            $this->_offset
+        );
     }
 
     protected function buildUnion()
@@ -907,7 +909,12 @@ class QueryBuilder
      */
     public function createTable($tableName, $columns, $options = null, $ifNotExists = false)
     {
-        return $this->getAdapter()->sqlCreateTable($tableName, $columns, $options, $ifNotExists);
+        return $this->getAdapter()->sqlCreateTable(
+            $tableName,
+            $columns,
+            $options,
+            $ifNotExists
+        );
     }
 
     /**

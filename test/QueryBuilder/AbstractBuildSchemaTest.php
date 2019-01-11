@@ -4,14 +4,9 @@ namespace Tsukasa\Tests\QueryBuilder;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
-use Tsukasa\Helper\Creator;
-use Tsukasa\Query\Connection;
-use Tsukasa\Query\PDO;
-use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
 use ReflectionClass;
 
-abstract class BuildSchemaTest extends BaseTest
+abstract class AbstractBuildSchemaTest extends BaseTest
 {
     protected $config = [];
     /**

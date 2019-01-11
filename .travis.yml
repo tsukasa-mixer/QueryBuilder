@@ -10,6 +10,7 @@ php:
 install: composer install
 
 before_script:
+  - composer global require satooshi/php-coveralls
   - mysql -u root -e 'CREATE DATABASE test;'
   - psql -c 'create database test;' -U postgres
 

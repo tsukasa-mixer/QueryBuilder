@@ -186,7 +186,6 @@ abstract class BaseAdapter implements ISQLGenerator
      * @param $sql
      * @return mixed
      *
-     * @deprecated
      */
     public function quoteSql($sql)
     {

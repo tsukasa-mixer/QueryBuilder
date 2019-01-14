@@ -46,11 +46,11 @@ class OtherTest extends BaseTest
         $qb = $this->getQueryBuilder();
         $this->assertEquals(
             $this->quoteSql('INSERT INTO `test` (`name`) VALUES (\'qwe\')'),
-            $qb->insert('test', [['name' => 'qwe']])
+            $qb->insert('test', [['name' => 'qwe']])->toSQL()
         );
         $this->assertEquals(
             $this->quoteSql('INSERT INTO `test` (`name`) VALUES (\'foo\'), (\'bar\')'),
-            $qb->insert('test', [['name' => 'foo'], ['name' => 'bar']])
+            $qb->insert('test', [['name' => 'foo'], ['name' => 'bar']])->toSQL()
         );
     }
 

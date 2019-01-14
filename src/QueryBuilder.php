@@ -20,6 +20,7 @@ use Tsukasa\QueryBuilder\Database\Pgsql\Adapter as PgsqlAdapter;
 class QueryBuilder
 {
     const TYPE_SELECT = 'SELECT';
+    const TYPE_INSERT = 'INSERT';
     const TYPE_UPDATE = 'UPDATE';
     const TYPE_DELETE = 'DELETE';
 
@@ -183,6 +184,19 @@ class QueryBuilder
         return $this;
     }
 
+    public function setType($type)
+    {
+        $types = [static::TYPE_INSERT, static::TYPE_UPDATE, static::TYPE_DELETE, static::TYPE_SELECT];
+        if (in_array($type, $types, true)) {
+            $this->_type = $type;
+        } else {
+            throw new QBException('Incorrect type');
+        }
+
+
+        return $this;
+    }
+
     /**
      * @return $this
      */
@@ -192,6 +206,14 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function setTypeInsert()
+    {
+        $this->_type = self::TYPE_INSERT;
+        return $this;
+    }
     /**
      * @return $this
      */
@@ -583,7 +605,9 @@ class QueryBuilder
      */
     public function insert($tableName, $rows)
     {
-        return $this->getAdapter()->sqlInsert($tableName, $rows, $this->_queryOptions);
+        $this->setTypeInsert();
+        $this->_update = [$tableName, $rows];
+        return $this;
     }
 
     /**
@@ -593,6 +617,7 @@ class QueryBuilder
      */
     public function update($tableName, array $values)
     {
+        $this->setTypeUpdate();
         $this->_update = [$tableName, $values];
         return $this;
     }
@@ -838,6 +863,13 @@ class QueryBuilder
         ]);
     }
 
+    public function generateInsertSql()
+    {
+        list($tableName, $values) = $this->_update;
+        $this->setAlias();
+        return $this->getAdapter()->sqlInsert($tableName, $values, $this->_queryOptions);
+    }
+
     public function generateUpdateSql()
     {
         list($tableName, $values) = $this->_update;
@@ -858,6 +890,9 @@ class QueryBuilder
         {
             case self::TYPE_SELECT:
                 return $this->generateSelectSql();
+
+            case self::TYPE_INSERT:
+                return $this->generateInsertSql();
 
             case self::TYPE_UPDATE:
                 return $this->generateUpdateSql();

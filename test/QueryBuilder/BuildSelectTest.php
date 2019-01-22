@@ -12,10 +12,11 @@ use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilderInterface;
 
 class BuildSelectJoinCallback extends AbstractJoinCallback
 {
-    public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes)
+    public function run(QueryBuilderInterface $qb, ILookupBuilder $lookupBuilder, array $lookupNodes)
     {
         $column = '';
         $alias = '';

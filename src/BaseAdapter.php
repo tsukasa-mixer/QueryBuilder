@@ -677,10 +677,10 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param $having
-     * @param QueryBuilder|null $queryBuilder
+     * @param QueryBuilderInterface|null $queryBuilder
      * @return string
      */
-    public function sqlHaving($having, QueryBuilder $queryBuilder = null)
+    public function sqlHaving($having, QueryBuilderInterface $queryBuilder = null)
     {
         if (empty($having)) {
             return '';
@@ -698,7 +698,7 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @param QueryBuilder|string $union
+     * @param QueryBuilderInterface|string $union
      * @param bool $all
      * @return string
      */

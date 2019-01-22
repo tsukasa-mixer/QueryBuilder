@@ -7,10 +7,11 @@ use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilderInterface;
 
 class CallbackTestColumnCallback extends AbstractColumnCallback
 {
-    public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
+    public function run(QueryBuilderInterface $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
         $column = '?';
         $lookup = '?';
@@ -37,7 +38,7 @@ class CallbackTestColumnCallback extends AbstractColumnCallback
 
 class CallbackTestTwoColumnCallback extends AbstractColumnCallback
 {
-    public function run(QueryBuilder $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
+    public function run(QueryBuilderInterface $qb, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
         $lookup = $lookupBuilder->getDefault();
         foreach ($lookupNodes as $nodeName) {

@@ -5,10 +5,11 @@ namespace Tsukasa\Tests\QueryBuilder;
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\QueryBuilderInterface;
 
 class CloneColumnCallback extends  AbstractColumnCallback
 {
-    public function run(QueryBuilder $queryBuilder, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
+    public function run(QueryBuilderInterface $queryBuilder, ILookupBuilder $lookupBuilder, array $lookupNodes, $value)
     {
         $queryBuilder->join('LEFT JOIN', 'test', ['test_1.id' => 'user_1.user_id'], 'test_1');
         return ['exact', 'id', $value];

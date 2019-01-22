@@ -17,7 +17,7 @@ use Tsukasa\QueryBuilder\Database\Mysql\Adapter as MysqlAdapter;
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter as SqliteAdapter;
 use Tsukasa\QueryBuilder\Database\Pgsql\Adapter as PgsqlAdapter;
 
-class QueryBuilder
+class QueryBuilder implements QueryBuilderInterface
 {
     const TYPE_SELECT = 'SELECT';
     const TYPE_INSERT = 'INSERT';
@@ -124,18 +124,10 @@ class QueryBuilder
     }
 
     /**
-     * @return \Doctrine\DBAL\Platforms\AbstractPlatform
-     */
-    public function getDatabasePlatform()
-    {
-        return $this->getConnection()->getDatabasePlatform();
-    }
-
-    /**
      * @param Connection $connection
      * @param BaseAdapter|null $adapter
      * @param LookupBuilder|null $lookupBuilder
-     * @return QueryBuilder
+     * @return QueryBuilderInterface
      */
     public static function getInstance(Connection $connection, $adapter = null, $lookupBuilder = null)
     {
@@ -176,7 +168,7 @@ class QueryBuilder
 
     /**
      * @param ILookupCollection $lookupCollection
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addLookupCollection(ILookupCollection $lookupCollection)
     {
@@ -198,7 +190,7 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeSelect()
     {
@@ -207,15 +199,16 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeInsert()
     {
         $this->_type = self::TYPE_INSERT;
         return $this;
     }
+
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeUpdate()
     {
@@ -224,7 +217,7 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeDelete()
     {
@@ -332,7 +325,7 @@ class QueryBuilder
     /**
      * @param string|IToSql $select
      * @param null $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addSelect($select, $alias = null)
     {
@@ -350,7 +343,7 @@ class QueryBuilder
 
     /**
      * @param array|string $select
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setSelect($select)
     {
@@ -374,7 +367,7 @@ class QueryBuilder
     /**
      * @param array|string $tableName
      * @param null|string $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setFrom($tableName, $alias = null)
     {
@@ -402,7 +395,7 @@ class QueryBuilder
     /**
      * @param int $page
      * @param int $pageSize
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function paginate($page = 1, $pageSize = 10)
     {
@@ -416,7 +409,7 @@ class QueryBuilder
 
     /**
      * @param string|number $limit
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setLimit($limit)
     {
@@ -434,7 +427,7 @@ class QueryBuilder
 
     /**
      * @param string|number $offset
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setOffset($offset)
     {
@@ -467,12 +460,12 @@ class QueryBuilder
     }
 
     /**
-     * @param string $joinType  LEFT JOIN, RIGHT JOIN, etc...
-     * @param string|QueryBuilder $tableName
+     * @param string $joinType LEFT JOIN, RIGHT JOIN, etc...
+     * @param string|QueryBuilderInterface $tableName
      * @param array $on link columns
      * @param string|null $alias string
      * @param string|null $index
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function join($joinType, $tableName, array $on = [], $alias = null, $index = null)
     {
@@ -497,7 +490,7 @@ class QueryBuilder
     /**
      * @param $sql
      * @param string $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function joinRaw($sql, $alias = null)
     {
@@ -506,7 +499,7 @@ class QueryBuilder
 
     /**
      * @param array|string $columns columns
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setGroup($columns)
     {
@@ -520,7 +513,7 @@ class QueryBuilder
 
     /**
      * @param array|string $columns columns
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addGroup($columns)
     {
@@ -538,7 +531,7 @@ class QueryBuilder
 
     /**
      * @param array|string|null $columns columns
-     * @return static
+     * @return QueryBuilderInterface
      */
     public function setOrder($columns)
     {
@@ -562,7 +555,7 @@ class QueryBuilder
 
     /**
      * @param string|Expression $column
-     * @return static
+     * @return QueryBuilderInterface
      */
     public function addOrder($column)
     {
@@ -601,7 +594,7 @@ class QueryBuilder
     /**
      * @param $tableName
      * @param array $rows
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function insert($tableName, $rows)
     {
@@ -613,7 +606,7 @@ class QueryBuilder
     /**
      * @param $tableName string
      * @param array $values columns [name => value...]
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function update($tableName, array $values)
     {
@@ -743,7 +736,7 @@ class QueryBuilder
 
     /**
      * @param $condition
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addWhere($condition)
     {
@@ -762,7 +755,7 @@ class QueryBuilder
 
     /**
      * @param $condition
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addOrWhere($condition)
     {
@@ -954,7 +947,7 @@ class QueryBuilder
 
     /**
      * @param array|string|Q $having lookups
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setHaving($having)
     {

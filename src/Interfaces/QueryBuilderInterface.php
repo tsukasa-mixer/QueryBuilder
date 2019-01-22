@@ -63,7 +63,7 @@ interface QueryBuilderInterface
 
     /**
      * @param string|IToSql $select
-     * @param null $alias
+     * @param null|string $alias
      * @return $this
      */
     public function addSelect($select, $alias = null);
@@ -231,7 +231,7 @@ interface QueryBuilderInterface
     /**
      * @param $tableName
      * @param $columns
-     * @param null $options
+     * @param null|string $options
      * @param bool $ifNotExists
      * @return string
      */

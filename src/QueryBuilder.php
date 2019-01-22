@@ -902,8 +902,7 @@ class QueryBuilder implements QueryBuilderInterface
     protected function buildHaving()
     {
         return $this->getAdapter()->sqlHaving(
-            $this->parseCondition($this->_having),
-            $this
+            $this->parseCondition($this->_having)
         );
     }
 
@@ -949,7 +948,7 @@ class QueryBuilder implements QueryBuilderInterface
     {
         $this->_union = [];
 
-        if ($unions) {
+        if (!empty($unions)) {
             foreach ($unions as $union) {
                 $this->addUnion($union, $all);
             }

@@ -222,7 +222,7 @@ interface QueryBuilderInterface
 
     public function addUnion($union, $all = false);
 
-    public function addUnions(array $unions, $all = false);
+    public function setUnions(array $unions, $all = false);
 
     /**
      * Makes alias for joined table

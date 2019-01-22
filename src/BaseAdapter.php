@@ -105,7 +105,7 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param \PDO|Connection $driver
-     * @return $this
+     * @return ISQLGenerator
      */
     public function setDriver($driver)
     {
@@ -219,9 +219,11 @@ abstract class BaseAdapter implements ISQLGenerator
         if ($rawValue === true || $rawValue === false || $rawValue === 'true' || $rawValue === 'false') {
             return $this->getBoolean($rawValue);
         }
-        else if ($rawValue === 'null' || $rawValue === null) {
+
+        if ($rawValue === 'null' || $rawValue === null) {
             return 'NULL';
         }
+
         return $rawValue;
     }
 

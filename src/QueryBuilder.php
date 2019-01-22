@@ -9,6 +9,7 @@ use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
 use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
@@ -82,7 +83,7 @@ class QueryBuilder implements QueryBuilderInterface
      */
     private $_update = [];
     /**
-     * @var BaseAdapter
+     * @var ISQLGenerator
      */
     protected $adapter;
     /**
@@ -126,7 +127,7 @@ class QueryBuilder implements QueryBuilderInterface
 
     /**
      * @param Connection $connection
-     * @param BaseAdapter|null $adapter
+     * @param ISQLGenerator|null $adapter
      * @param LookupBuilder|null $lookupBuilder
      * @return QueryBuilderInterface
      */
@@ -157,10 +158,10 @@ class QueryBuilder implements QueryBuilderInterface
     /**
      * QueryBuilder constructor.
      * @param Connection $connection
-     * @param BaseAdapter $adapter
+     * @param ISQLGenerator $adapter
      * @param ILookupBuilder $lookupBuilder
      */
-    public function __construct(Connection $connection, BaseAdapter $adapter, ILookupBuilder $lookupBuilder)
+    public function __construct(Connection $connection, ISQLGenerator $adapter, ILookupBuilder $lookupBuilder)
     {
         $this->connection = $connection;
         $this->adapter = $adapter;
@@ -465,7 +466,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @return BaseAdapter|IAdapter
+     * @return ISQLGenerator|IAdapter
      */
     public function getAdapter()
     {

@@ -5,6 +5,7 @@ namespace Tsukasa\QueryBuilder;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 
 class BaseLookupCollection implements ILookupCollection
 {
@@ -23,7 +24,7 @@ class BaseLookupCollection implements ILookupCollection
     }
 
     /**
-     * @param IAdapter|BaseAdapter $adapter
+     * @param IAdapter|ISQLGenerator $adapter
      * @param $lookup
      * @param $column
      * @param $value

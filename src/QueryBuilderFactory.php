@@ -4,11 +4,12 @@ namespace Tsukasa\QueryBuilder;
 
 use Doctrine\DBAL\Driver\Connection;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 
 class QueryBuilderFactory
 {
     /**
-     * @var BaseAdapter
+     * @var ISQLGenerator
      */
     protected $adapter;
     /**
@@ -23,11 +24,11 @@ class QueryBuilderFactory
     /**
      * QueryBuilder constructor.
      * @param Connection $connection
-     * @param BaseAdapter $adapter
+     * @param ISQLGenerator $adapter
      * @param ILookupBuilder $lookupBuilder
      * @internal param ICallback $callback
      */
-    public function __construct(Connection $connection, BaseAdapter $adapter, ILookupBuilder $lookupBuilder)
+    public function __construct(Connection $connection, ISQLGenerator $adapter, ILookupBuilder $lookupBuilder)
     {
         $this->connection = $connection;
         $this->adapter = $adapter;

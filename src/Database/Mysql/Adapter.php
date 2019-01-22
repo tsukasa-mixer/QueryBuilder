@@ -30,9 +30,6 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
         return strpos($name, '`') !== false || $name === '*' ? $name : '`' . $name . '`';
     }
 
-    /**
-     * @return array
-     */
     public function getLookupCollection()
     {
         return new LookupCollection();
@@ -90,12 +87,11 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
      */
     public function getBoolean($value = null)
     {
-        if (gettype($value) === 'boolean') {
+        if (is_bool($value)) {
             return (int)$value;
         }
-        else {
-            return $value ? 1 : 0;
-        }
+
+        return $value ? 1 : 0;
     }
 
     protected function formatDateTime($value, $format)
@@ -167,7 +163,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
             }
             return ' ' . $sql;
         }
-        elseif ($this->hasOffset($offset)) {
+
+        if ($this->hasOffset($offset)) {
             // limit is not optional in MySQL
             // http://stackoverflow.com/a/271650/1106908
             // http://dev.mysql.com/doc/refman/5.0/en/select.html#idm47619502796240
@@ -219,7 +216,7 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
      */
     public function prepareValue($value)
     {
-        if (gettype($value) === 'boolean') {
+        if (is_bool($value)) {
             return (int)$value;
         }
         return parent::prepareValue($value);

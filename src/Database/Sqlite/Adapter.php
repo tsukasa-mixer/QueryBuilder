@@ -215,7 +215,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
             }
             return ' ' . $sql;
         }
-        elseif ($this->hasOffset($offset)) {
+
+        if ($this->hasOffset($offset)) {
             // limit is not optional in SQLite
             // http://www.sqlite.org/syntaxdiagrams.html#select-stmt
             // If the LIMIT expression evaluates to a negative value, then there

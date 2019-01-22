@@ -15,7 +15,7 @@ class BaseLookupCollection implements ILookupCollection
      */
     public function has($lookup)
     {
-        return in_array($lookup, [
+        return in_array(strtolower($lookup), [
             'exact', 'gte', 'gt', 'lte', 'lt',
             'range', 'isnt', 'isnull', 'contains',
             'icontains', 'startswith', 'istartswith',
@@ -32,7 +32,7 @@ class BaseLookupCollection implements ILookupCollection
      */
     public function process(IAdapter $adapter, $lookup, $column, $value)
     {
-        switch ($lookup) {
+        switch (strtolower($lookup)) {
             case 'exact':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);

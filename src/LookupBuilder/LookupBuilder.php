@@ -3,8 +3,7 @@
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
 use Tsukasa\QueryBuilder\Exception\QBException;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class LookupBuilder extends Base
 {

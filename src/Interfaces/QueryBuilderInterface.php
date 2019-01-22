@@ -5,8 +5,9 @@
  * Date: 22.01.19 14:39
  */
 
-namespace Tsukasa\QueryBuilder;
+namespace Tsukasa\QueryBuilder\Interfaces;
 
+use Tsukasa\QueryBuilder\BaseAdapter;
 use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;

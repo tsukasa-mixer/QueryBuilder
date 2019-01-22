@@ -9,8 +9,7 @@ use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 abstract class Base implements ILookupBuilder
 {

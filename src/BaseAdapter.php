@@ -8,6 +8,7 @@ use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 abstract class BaseAdapter implements ISQLGenerator
 {
@@ -677,10 +678,10 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param $having
-     * @param QueryBuilderInterface|null $queryBuilder
+     * @param QueryBuilderInterface $queryBuilder
      * @return string
      */
-    public function sqlHaving($having, QueryBuilderInterface $queryBuilder = null)
+    public function sqlHaving($having, QueryBuilderInterface $queryBuilder)
     {
         if (empty($having)) {
             return '';
@@ -708,12 +709,19 @@ abstract class BaseAdapter implements ISQLGenerator
             return '';
         }
 
-        if ($union instanceof QueryBuilder) {
+        if ($union instanceof QueryBuilderInterface) {
             $unionSQL = $union->setOrder(null)->toSQL();
         } else {
             $unionSQL = $this->quoteSql($union);
         }
-        return ($all ? 'UNION ALL' : 'UNION') . ' (' . $unionSQL . ')';
+
+        $sql = 'UNION ';
+
+        if ($all) {
+            $sql .= 'ALL ';
+        }
+
+        return $sql . '(' . $unionSQL . ')';
     }
 
     /**

@@ -3,8 +3,7 @@
 namespace Tsukasa\QueryBuilder\Expression;
 
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 abstract class AbstractExpression implements IToSql
 {

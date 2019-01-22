@@ -3,7 +3,7 @@
 namespace Tsukasa\QueryBuilder\Callbacks;
 
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 
 abstract class AbstractColumnCallback

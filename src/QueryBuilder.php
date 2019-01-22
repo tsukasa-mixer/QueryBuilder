@@ -10,6 +10,7 @@ use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\Q\Q;
 
@@ -469,7 +470,7 @@ class QueryBuilder implements QueryBuilderInterface
      */
     public function join($joinType, $tableName, array $on = [], $alias = null, $index = null)
     {
-        if ($tableName instanceof QueryBuilder) {
+        if ($tableName instanceof QueryBuilderInterface) {
             $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias, $index);
         } else {
             if ($joinType === 'RAW' && !empty($tableName)) {

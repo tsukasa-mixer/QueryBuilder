@@ -1,8 +1,6 @@
 <?php
 
 namespace Tsukasa\QueryBuilder\Interfaces;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
 
 /**
  * Interface ILookupBuilder

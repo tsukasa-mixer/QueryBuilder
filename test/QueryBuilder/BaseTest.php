@@ -5,8 +5,7 @@ namespace Tsukasa\Tests\QueryBuilder;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 use Tsukasa\Tests\QueryBuilder\fixtures\TestQueryBuilder;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase

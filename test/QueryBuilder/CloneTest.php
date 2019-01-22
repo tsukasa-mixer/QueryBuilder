@@ -4,8 +4,7 @@ namespace Tsukasa\Tests\QueryBuilder;
 
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class CloneColumnCallback extends  AbstractColumnCallback
 {

@@ -6,8 +6,7 @@ use Exception;
 use Tsukasa\QueryBuilder\Callbacks\AbstractColumnCallback;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class CallbackTestColumnCallback extends AbstractColumnCallback
 {

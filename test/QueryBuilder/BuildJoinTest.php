@@ -13,8 +13,7 @@ use Tsukasa\QueryBuilder\Aggregation\Max;
 use Tsukasa\QueryBuilder\Aggregation\Min;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class BuildJoinCallback extends AbstractJoinCallback
 {

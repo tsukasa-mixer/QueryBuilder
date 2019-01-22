@@ -10,9 +10,7 @@ use Tsukasa\QueryBuilder\Aggregation\Sum;
 use Tsukasa\QueryBuilder\Callbacks\AbstractJoinCallback;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
-use Tsukasa\QueryBuilder\QueryBuilder;
-use Tsukasa\QueryBuilder\QueryBuilderInterface;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class BuildSelectJoinCallback extends AbstractJoinCallback
 {

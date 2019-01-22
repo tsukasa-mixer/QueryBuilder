@@ -5,9 +5,6 @@ namespace Tsukasa\Tests\QueryBuilder;
 use Exception;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
-use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
-use Tsukasa\QueryBuilder\Database\Mysql\Adapter;
-use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupLibrary implements ILookupCollection
 {

@@ -178,11 +178,14 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
     {
         if ($value instanceof \DateTime) {
             $value = $value->format($format);
-        } elseif ($value === null) {
+        }
+        elseif ($value === null) {
             $value = date($format);
-        } elseif (is_numeric($value)) {
+        }
+        elseif (is_numeric($value)) {
             $value = date($format, $value);
-        } elseif (is_string($value)) {
+        }
+        elseif (is_string($value)) {
             $value = date($format, strtotime($value));
         }
         return (string)$value;
@@ -219,7 +222,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
                 $sql .= ' OFFSET ' . $offset;
             }
             return ' ' . $sql;
-        } elseif ($this->hasOffset($offset)) {
+        }
+        elseif ($this->hasOffset($offset)) {
             // limit is not optional in SQLite
             // http://www.sqlite.org/syntaxdiagrams.html#select-stmt
             // If the LIMIT expression evaluates to a negative value, then there

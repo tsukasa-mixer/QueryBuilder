@@ -15,7 +15,8 @@ class LookupCollection extends BaseLookupCollection
         ];
         if (in_array($lookup, $lookups)) {
             return true;
-        } else {
+        }
+        else {
             return parent::has($lookup);
         }
     }

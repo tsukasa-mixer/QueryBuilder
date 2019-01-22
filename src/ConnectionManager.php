@@ -50,7 +50,8 @@ class ConnectionManager
         foreach ($config as $key => $value) {
             if (method_exists($this, 'set' . ucfirst($key))) {
                 $this->{'set' . ucfirst($key)}($value);
-            } else {
+            }
+            else {
                 $this->{$key} = $value;
             }
         }

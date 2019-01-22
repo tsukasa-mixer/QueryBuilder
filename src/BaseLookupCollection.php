@@ -39,11 +39,14 @@ class BaseLookupCollection implements ILookupCollection
 
                 if ($value instanceof Expression) {
                     $sqlValue = $value->toSQL();
-                } else if ($value instanceof QueryBuilder) {
+                }
+                else if ($value instanceof QueryBuilder) {
                     $sqlValue = '(' . $value->toSQL() . ')';
-                } else if (strpos($value, 'SELECT') !== false) {
+                }
+                else if (strpos($value, 'SELECT') !== false) {
                     $sqlValue = '(' . $value . ')';
-                } else {
+                }
+                else {
                     $sqlValue = $adapter->quoteValue($value);
                 }
                 return $adapter->quoteColumn($column) . '=' . $sqlValue;
@@ -106,13 +109,15 @@ class BaseLookupCollection implements ILookupCollection
 
             case 'in':
                 if (is_array($value)) {
-                    $quotedValues = array_map(function ($item) use ($adapter) {
+                    $quotedValues = array_map(function($item) use ($adapter) {
                         return $adapter->quoteValue($item);
                     }, $value);
                     $sqlValue = implode(', ', $quotedValues);
-                } else if ($value instanceof QueryBuilder) {
+                }
+                else if ($value instanceof QueryBuilder) {
                     $sqlValue = $value->toSQL();
-                } else {
+                }
+                else {
                     $sqlValue = $adapter->quoteSql($value);
                 }
                 return $adapter->quoteColumn($column) . ' IN (' . $sqlValue . ')';

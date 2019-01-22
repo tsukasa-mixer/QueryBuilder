@@ -280,7 +280,7 @@ abstract class BaseAdapter implements ISQLGenerator
             }
         }
 
-        if (is_array($columns) ) {
+        if (is_array($columns)) {
             return implode(', ', $columns);
         }
 
@@ -634,12 +634,15 @@ abstract class BaseAdapter implements ISQLGenerator
         if (is_string($tableName) && $tableName = $this->getRawTableName($tableName)) {
             if (strpos($tableName, 'SELECT') !== false) {
                 $toSql[] = '(' . $this->quoteSql($tableName) . ')';
-            } else {
+            }
+            else {
                 $toSql[] = $this->quoteTableName($tableName);
             }
-        } else if ($tableName instanceof QueryBuilder) {
+        }
+        else if ($tableName instanceof QueryBuilder) {
             $toSql[] = '(' . $this->quoteSql($tableName->toSQL()) . ')';
-        } else {
+        }
+        else {
             throw new QBException('Incorrect table name');
         }
 

@@ -267,6 +267,9 @@ abstract class BaseAdapter implements ISQLGenerator
             }
 
             $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
+            if ($columns === false) {
+                return '';
+            }
         }
         foreach ($columns as $i => $column) {
             if ($column instanceof Expression) {

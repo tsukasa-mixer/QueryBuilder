@@ -187,7 +187,7 @@ class Adapter extends BaseAdapter implements IAdapter
     /**
      * @param $value
      * @param $format
-     * @return bool|string
+     * @return string
      */
     protected function formatDateTime($value, $format)
     {

@@ -52,15 +52,15 @@ interface ISQLGenerator
     public function getRawTableName($name);
 
     /**
-     * @return null|\PDO|Connection
+     * @return null|Connection
      */
     public function getDriver();
 
     /**
-     * @param \PDO|Connection $driver
+     * @param Connection $driver
      * @return $this
      */
-    public function setDriver($driver);
+    public function setDriver(Connection $driver);
 
     /**
      * Quotes a string value for use in a query.
@@ -130,7 +130,7 @@ interface ISQLGenerator
 
     /**
      * @param $columns
-     * @return array|string
+     * @return string
      */
     public function buildColumns($columns);
 
@@ -183,7 +183,7 @@ interface ISQLGenerator
     /**
      * @param $tableName
      * @param array $columns
-     * @param null $options
+     * @param null|string $options
      * @param bool $ifNotExists
      * @return string
      */
@@ -252,8 +252,8 @@ interface ISQLGenerator
      * @param $columns
      * @param $refTable
      * @param $refColumns
-     * @param null $delete
-     * @param null $update
+     * @param null|string $delete
+     * @param null|string $update
      * @return string
      */
     public function sqlAddForeignKey($tableName, $name, $columns, $refTable, $refColumns, $delete = null, $update = null);
@@ -264,25 +264,25 @@ interface ISQLGenerator
     public function getRandomOrder();
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return string
      */
     public function getBoolean($value = null);
 
     /**
-     * @param null $value
+     * @param mixed $value
      * @return string
      */
     public function getDateTime($value = null);
 
     /**
-     * @param null $value
+     * @param mixed $value
      * @return string
      */
     public function getDate($value = null);
 
     /**
-     * @param null $value
+     * @param mixed $value
      * @return mixed
      */
     public function getTimestamp($value = null);
@@ -361,7 +361,7 @@ interface ISQLGenerator
 
     /**
      * @param array $columns
-     * @param null $options
+     * @param null|string $options
      * @return string
      */
     public function sqlOrderBy(array $columns, $options = null);

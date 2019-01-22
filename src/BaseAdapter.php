@@ -17,7 +17,7 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     protected $tablePrefix;
     /**
-     * @var null|\PDO
+     * @var null|Connection
      */
     protected $driver;
 
@@ -96,7 +96,7 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @return null|\PDO|Connection
+     * @return null|Connection
      */
     public function getDriver()
     {
@@ -104,15 +104,11 @@ abstract class BaseAdapter implements ISQLGenerator
     }
 
     /**
-     * @param \PDO|Connection $driver
+     * @param Connection $driver
      * @return ISQLGenerator
      */
-    public function setDriver($driver)
+    public function setDriver(Connection $driver)
     {
-        if (!($driver instanceof \PDO || $driver instanceof Connection)) {
-            throw new QBException('Drive must be instance PDO or ' . Connection::class);
-        }
-
         $this->driver = $driver;
         return $this;
     }
@@ -256,7 +252,7 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param $columns
-     * @return array|string
+     * @return string
      */
     public function buildColumns($columns)
     {
@@ -280,7 +276,12 @@ abstract class BaseAdapter implements ISQLGenerator
                 $columns[$i] = $this->quoteColumn($column);
             }
         }
-        return is_array($columns) ? implode(', ', $columns) : $columns;
+
+        if (is_array($columns) ) {
+            return implode(', ', $columns);
+        }
+
+        return $columns;
     }
 
     /**
@@ -293,7 +294,9 @@ abstract class BaseAdapter implements ISQLGenerator
     public function sqlAddPrimaryKey($tableName, $name, $columns)
     {
         if (is_string($columns)) {
-            $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
+            $columns = [
+                preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY)
+            ];
         }
         foreach ($columns as $i => $col) {
             $columns[$i] = $this->quoteColumn($col);
@@ -410,14 +413,6 @@ abstract class BaseAdapter implements ISQLGenerator
         ]);
     }
 
-
-    /**
-     * @param $tableName
-     * @param array $columns
-     * @param null $options
-     * @param bool $ifNotExists
-     * @return string
-     */
     public function sqlCreateTable($tableName, $columns, $options = null, $ifNotExists = false)
     {
         $tableName = $this->getRawTableName($tableName);
@@ -520,16 +515,6 @@ abstract class BaseAdapter implements ISQLGenerator
      */
     abstract public function sqlDropForeignKey($tableName, $name);
 
-    /**
-     * @param $tableName
-     * @param $name
-     * @param $columns
-     * @param $refTable
-     * @param $refColumns
-     * @param null $delete
-     * @param null $update
-     * @return string
-     */
     public function sqlAddForeignKey($tableName, $name, $columns, $refTable, $refColumns, $delete = null, $update = null)
     {
         $sql = 'ALTER TABLE ' . $this->quoteTableName($tableName)
@@ -769,8 +754,13 @@ abstract class BaseAdapter implements ISQLGenerator
 
         if (is_string($columns)) {
             $columns = preg_split('/\s*,\s*/', $columns, -1, PREG_SPLIT_NO_EMPTY);
-            $quotedColumns = array_map([$this, 'quoteColumn'], $columns);
-            return implode(', ', $quotedColumns);
+
+            if ($columns) {
+                $quotedColumns = array_map([$this, 'quoteColumn'], (array)$columns);
+                return implode(', ', $quotedColumns);
+            }
+
+            return '';
         }
 
         $group = [];
@@ -833,7 +823,7 @@ abstract class BaseAdapter implements ISQLGenerator
                 }
             }
             else {
-                $subQuery = $this->quoteSql($expr);
+                $subQuery = (string)$this->quoteSql($expr);
 
                 if (is_numeric($column)) {
                     $column = $subQuery;

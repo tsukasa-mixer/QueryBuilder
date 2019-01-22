@@ -115,19 +115,11 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
         return $value;
     }
 
-    /**
-     * @param null $value
-     * @return string
-     */
     public function getDateTime($value = null)
     {
         return $this->formatDateTime($value, "Y-m-d H:i:s");
     }
 
-    /**
-     * @param null $value
-     * @return string
-     */
     public function getDate($value = null)
     {
         return $this->formatDateTime($value, "Y-m-d");

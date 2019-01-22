@@ -50,10 +50,10 @@ class Expression extends AbstractExpression
         if (strpos($sql, '?'))
         {
             if (mb_substr_count($sql, '?') !== count($this->params)) {
-                throw new QBException('Incorrect parameters count in Expression: "'.addslashes($this->expression).'"');
+                throw new QBException('Incorrect parameters count in Expression: "' . addslashes($this->expression) . '"');
             }
 
-            $sql = preg_replace_callback('~\?~', function ($matches) {
+            $sql = preg_replace_callback('~\?~', function($matches) {
                 return $this->qb->getAdapter()->quoteValue(
                     $this->getNextParam()
                 );

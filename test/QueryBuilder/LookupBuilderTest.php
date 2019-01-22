@@ -4,7 +4,6 @@ namespace Tsukasa\Tests\QueryBuilder;
 
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\Database\Sqlite\LookupCollection;
-use Tsukasa\QueryBuilder\QueryBuilder;
 
 class LookupBuilderTest extends BaseTest
 {

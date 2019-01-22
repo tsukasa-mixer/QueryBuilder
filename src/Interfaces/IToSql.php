@@ -2,8 +2,6 @@
 
 namespace Tsukasa\QueryBuilder\Interfaces;
 
-use Tsukasa\QueryBuilder\QueryBuilder;
-
 interface IToSql
 {
     /**
@@ -14,8 +12,8 @@ interface IToSql
     public function toSql();
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilderInterface $queryBuilder
      * @return static
      */
-    public function setQb(QueryBuilder $queryBuilder);
+    public function setQb(QueryBuilderInterface $queryBuilder);
 }

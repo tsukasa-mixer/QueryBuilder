@@ -5,6 +5,7 @@ namespace Tsukasa\QueryBuilder;
 use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 
 class BaseLookupCollection implements ILookupCollection
 {
@@ -14,7 +15,7 @@ class BaseLookupCollection implements ILookupCollection
      */
     public function has($lookup)
     {
-        return in_array($lookup, [
+        return in_array(strtolower($lookup), [
             'exact', 'gte', 'gt', 'lte', 'lt',
             'range', 'isnt', 'isnull', 'contains',
             'icontains', 'startswith', 'istartswith',
@@ -23,7 +24,7 @@ class BaseLookupCollection implements ILookupCollection
     }
 
     /**
-     * @param IAdapter|BaseAdapter $adapter
+     * @param IAdapter|ISQLGenerator $adapter
      * @param $lookup
      * @param $column
      * @param $value
@@ -31,7 +32,7 @@ class BaseLookupCollection implements ILookupCollection
      */
     public function process(IAdapter $adapter, $lookup, $column, $value)
     {
-        switch ($lookup) {
+        switch (strtolower($lookup)) {
             case 'exact':
                 if ($value instanceof \DateTime) {
                     $value = $adapter->getDateTime($value);
@@ -39,11 +40,14 @@ class BaseLookupCollection implements ILookupCollection
 
                 if ($value instanceof Expression) {
                     $sqlValue = $value->toSQL();
-                } else if ($value instanceof QueryBuilder) {
+                }
+                else if ($value instanceof QueryBuilder) {
                     $sqlValue = '(' . $value->toSQL() . ')';
-                } else if (strpos($value, 'SELECT') !== false) {
+                }
+                else if (strpos($value, 'SELECT') !== false) {
                     $sqlValue = '(' . $value . ')';
-                } else {
+                }
+                else {
                     $sqlValue = $adapter->quoteValue($value);
                 }
                 return $adapter->quoteColumn($column) . '=' . $sqlValue;
@@ -106,13 +110,15 @@ class BaseLookupCollection implements ILookupCollection
 
             case 'in':
                 if (is_array($value)) {
-                    $quotedValues = array_map(function ($item) use ($adapter) {
+                    $quotedValues = array_map(function($item) use ($adapter) {
                         return $adapter->quoteValue($item);
                     }, $value);
                     $sqlValue = implode(', ', $quotedValues);
-                } else if ($value instanceof QueryBuilder) {
+                }
+                else if ($value instanceof QueryBuilder) {
                     $sqlValue = $value->toSQL();
-                } else {
+                }
+                else {
                     $sqlValue = $adapter->quoteSql($value);
                 }
                 return $adapter->quoteColumn($column) . ' IN (' . $sqlValue . ')';

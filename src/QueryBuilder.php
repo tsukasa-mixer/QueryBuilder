@@ -9,7 +9,9 @@ use Tsukasa\QueryBuilder\Expression\Expression;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
+use Tsukasa\QueryBuilder\Interfaces\ISQLGenerator;
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 use Tsukasa\QueryBuilder\LookupBuilder\LookupBuilder;
 use Tsukasa\QueryBuilder\Q\Q;
 
@@ -17,7 +19,7 @@ use Tsukasa\QueryBuilder\Database\Mysql\Adapter as MysqlAdapter;
 use Tsukasa\QueryBuilder\Database\Sqlite\Adapter as SqliteAdapter;
 use Tsukasa\QueryBuilder\Database\Pgsql\Adapter as PgsqlAdapter;
 
-class QueryBuilder
+class QueryBuilder implements QueryBuilderInterface
 {
     const TYPE_SELECT = 'SELECT';
     const TYPE_INSERT = 'INSERT';
@@ -81,7 +83,7 @@ class QueryBuilder
      */
     private $_update = [];
     /**
-     * @var BaseAdapter
+     * @var ISQLGenerator
      */
     protected $adapter;
     /**
@@ -124,18 +126,10 @@ class QueryBuilder
     }
 
     /**
-     * @return \Doctrine\DBAL\Platforms\AbstractPlatform
-     */
-    public function getDatabasePlatform()
-    {
-        return $this->getConnection()->getDatabasePlatform();
-    }
-
-    /**
      * @param Connection $connection
-     * @param BaseAdapter|null $adapter
+     * @param ISQLGenerator|null $adapter
      * @param LookupBuilder|null $lookupBuilder
-     * @return QueryBuilder
+     * @return QueryBuilderInterface
      */
     public static function getInstance(Connection $connection, $adapter = null, $lookupBuilder = null)
     {
@@ -164,10 +158,10 @@ class QueryBuilder
     /**
      * QueryBuilder constructor.
      * @param Connection $connection
-     * @param BaseAdapter $adapter
+     * @param ISQLGenerator $adapter
      * @param ILookupBuilder $lookupBuilder
      */
-    public function __construct(Connection $connection, BaseAdapter $adapter, ILookupBuilder $lookupBuilder)
+    public function __construct(Connection $connection, ISQLGenerator $adapter, ILookupBuilder $lookupBuilder)
     {
         $this->connection = $connection;
         $this->adapter = $adapter;
@@ -176,7 +170,7 @@ class QueryBuilder
 
     /**
      * @param ILookupCollection $lookupCollection
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addLookupCollection(ILookupCollection $lookupCollection)
     {
@@ -189,7 +183,8 @@ class QueryBuilder
         $types = [static::TYPE_INSERT, static::TYPE_UPDATE, static::TYPE_DELETE, static::TYPE_SELECT];
         if (in_array($type, $types, true)) {
             $this->_type = $type;
-        } else {
+        }
+        else {
             throw new QBException('Incorrect type');
         }
 
@@ -198,7 +193,7 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeSelect()
     {
@@ -207,15 +202,16 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeInsert()
     {
         $this->_type = self::TYPE_INSERT;
         return $this;
     }
+
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeUpdate()
     {
@@ -224,7 +220,7 @@ class QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setTypeDelete()
     {
@@ -261,12 +257,15 @@ class QueryBuilder
         if ($newSelect === false) {
             if ($tableAlias === null || $rawColumn === '*') {
                 $columns = $rawColumn;
-            } elseif (strpos($rawColumn, '.') !== false) {
+            }
+            elseif (strpos($rawColumn, '.') !== false) {
                 $columns = $rawColumn;
-            } else {
+            }
+            else {
                 $columns = $tableAlias . '.' . $rawColumn;
             }
-        } else {
+        }
+        else {
             list($alias, $joinColumn) = $newSelect;
             $columns = $alias . '.' . $joinColumn;
         }
@@ -292,17 +291,21 @@ class QueryBuilder
             foreach ($this->_select as $alias => $column) {
                 if ($column instanceof Aggregation) {
                     $select[$alias] = $this->buildSelectFromAggregation($column);
-                } else if (is_string($column)) {
+                }
+                else if (is_string($column)) {
                     if (strpos($column, 'SELECT') !== false) {
                         $select[$alias] = $column;
-                    } else {
+                    }
+                    else {
                         $select[$alias] = $this->addColumnAlias($builder->fetchColumnName($column));
                     }
-                } else {
+                }
+                else {
                     $select[$alias] = $column;
                 }
             }
-        } else if (is_string($this->_select)) {
+        }
+        else if (is_string($this->_select)) {
             $select = $this->addColumnAlias($this->_select);
         }
         return $this->getAdapter()->sqlSelect($select, $this->_queryOptions);
@@ -322,7 +325,8 @@ class QueryBuilder
 
         if ($alias) {
             $this->_select[$alias] = $select;
-        } else {
+        }
+        else {
             $this->_select[] = $select;
         }
 
@@ -332,17 +336,19 @@ class QueryBuilder
     /**
      * @param string|IToSql $select
      * @param null $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addSelect($select, $alias = null)
     {
         if (is_string($select) && $newSelect = $this->getLookupBuilder()->buildJoin($this, $select)) {
             list($t_alias, $column) = $newSelect;
             $this->pushToSelect($t_alias . '.' . $column, $alias);
-        } else if ($select instanceof IToSql) {
-            $this->pushToSelect($select->setQb($this), $alias);
-        } else {
-            $this->pushToSelect($select, $alias);
+        }
+        else {
+            $this->pushToSelect(
+                $this->hydrate($select),
+                $alias
+            );
         }
 
         return $this;
@@ -350,7 +356,7 @@ class QueryBuilder
 
     /**
      * @param array|string $select
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setSelect($select)
     {
@@ -364,7 +370,8 @@ class QueryBuilder
             foreach ($select as $key => $part) {
                 $this->addSelect($part, $key);
             }
-        } else {
+        }
+        else {
             $this->addSelect($select);
         }
 
@@ -374,7 +381,7 @@ class QueryBuilder
     /**
      * @param array|string $tableName
      * @param null|string $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setFrom($tableName, $alias = null)
     {
@@ -402,7 +409,7 @@ class QueryBuilder
     /**
      * @param int $page
      * @param int $pageSize
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function paginate($page = 1, $pageSize = 10)
     {
@@ -416,7 +423,7 @@ class QueryBuilder
 
     /**
      * @param string|number $limit
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setLimit($limit)
     {
@@ -434,7 +441,7 @@ class QueryBuilder
 
     /**
      * @param string|number $offset
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setOffset($offset)
     {
@@ -459,7 +466,7 @@ class QueryBuilder
     }
 
     /**
-     * @return BaseAdapter|IAdapter
+     * @return ISQLGenerator
      */
     public function getAdapter()
     {
@@ -467,21 +474,23 @@ class QueryBuilder
     }
 
     /**
-     * @param string $joinType  LEFT JOIN, RIGHT JOIN, etc...
-     * @param string|QueryBuilder $tableName
+     * @param string $joinType LEFT JOIN, RIGHT JOIN, etc...
+     * @param string|QueryBuilderInterface $tableName
      * @param array $on link columns
      * @param string|null $alias string
      * @param string|null $index
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function join($joinType, $tableName, array $on = [], $alias = null, $index = null)
     {
-        if ($tableName instanceof QueryBuilder) {
+        if ($tableName instanceof QueryBuilderInterface) {
             $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias, $index);
-        } else {
+        }
+        else {
             if ($joinType === 'RAW' && !empty($tableName)) {
                 $join = $this->getAdapter()->quoteSql($tableName);
-            } else {
+            }
+            else {
                 $join = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
             }
 
@@ -497,7 +506,7 @@ class QueryBuilder
     /**
      * @param $sql
      * @param string $alias
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function joinRaw($sql, $alias = null)
     {
@@ -506,7 +515,7 @@ class QueryBuilder
 
     /**
      * @param array|string $columns columns
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setGroup($columns)
     {
@@ -520,7 +529,7 @@ class QueryBuilder
 
     /**
      * @param array|string $columns columns
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addGroup($columns)
     {
@@ -538,7 +547,7 @@ class QueryBuilder
 
     /**
      * @param array|string|null $columns columns
-     * @return static
+     * @return QueryBuilderInterface
      */
     public function setOrder($columns)
     {
@@ -553,7 +562,8 @@ class QueryBuilder
             foreach ($columns as $column) {
                 $this->addOrder($column);
             }
-        } else {
+        }
+        else {
             $this->addOrder($columns);
         }
 
@@ -562,7 +572,7 @@ class QueryBuilder
 
     /**
      * @param string|Expression $column
-     * @return static
+     * @return QueryBuilderInterface
      */
     public function addOrder($column)
     {
@@ -587,11 +597,13 @@ class QueryBuilder
                     }
 
                     $this->_order[] = $_column;
-                } else {
+                }
+                else {
                     $this->_order[] = current($temp);
                 }
             }
-        } else {
+        }
+        else {
             $this->_order[] = $column;
         }
 
@@ -601,7 +613,7 @@ class QueryBuilder
     /**
      * @param $tableName
      * @param array $rows
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function insert($tableName, $rows)
     {
@@ -613,7 +625,7 @@ class QueryBuilder
     /**
      * @param $tableName string
      * @param array $values columns [name => value...]
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function update($tableName, array $values)
     {
@@ -680,14 +692,18 @@ class QueryBuilder
                 if (is_numeric($key)) {
                     if ($value instanceof IToSql) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } elseif ($value instanceof QueryBuilder) {
+                    }
+                    elseif ($value instanceof QueryBuilder) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } else if (is_array($value)) {
+                    }
+                    else if (is_array($value)) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } else if (is_string($value)) {
+                    }
+                    else if (is_string($value)) {
                         $parts[] = $value;
                     }
-                } else {
+                }
+                else {
                     $tableAlias = $this->getAlias();
                     $value = $this->getAdapter()->prepareValue($value);
 
@@ -708,13 +724,16 @@ class QueryBuilder
                 return '(' . implode(') ' . $operator . ' (', $parts) . ')';
             }
 
-        } else if ($condition instanceof IToSql) {
+        }
+        else if ($condition instanceof IToSql) {
             return $condition
                 ->setQb($this)
                 ->toSql();
-        } else if ($condition instanceof QueryBuilder) {
+        }
+        else if ($condition instanceof QueryBuilder) {
             return $condition->toSQL();
-        } else if (is_string($condition)) {
+        }
+        else if (is_string($condition)) {
             return $condition;
         }
 
@@ -727,7 +746,8 @@ class QueryBuilder
         foreach ($operands as $operand) {
             if (is_array($operand)) {
                 $operand = $this->buildCondition($operand, $params);
-            } else {
+            }
+            else {
                 $operand = $this->parseCondition($operand);
             }
             if ($operand !== '') {
@@ -743,12 +763,12 @@ class QueryBuilder
 
     /**
      * @param $condition
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addWhere($condition)
     {
         if (!empty($condition)) {
-            $this->_whereAnd[] = $condition;
+            $this->_whereAnd[] = $this->hydrate($condition);
         }
         return $this;
     }
@@ -762,12 +782,12 @@ class QueryBuilder
 
     /**
      * @param $condition
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function addOrWhere($condition)
     {
         if (!empty($condition)) {
-            $this->_whereOr[] = $condition;
+            $this->_whereOr[] = $this->hydrate($condition);
         }
         return $this;
     }
@@ -788,7 +808,8 @@ class QueryBuilder
         foreach ($this->_whereAnd as $condition) {
             if (empty($where)) {
                 $where = ['and', $condition];
-            } else {
+            }
+            else {
                 $where = ['and', $where, ['and', $condition]];
             }
         }
@@ -796,7 +817,8 @@ class QueryBuilder
         foreach ($this->_whereOr as $condition) {
             if (empty($where)) {
                 $where = ['or', $condition];
-            } else {
+            }
+            else {
                 $where = ['or', $where, ['and', $condition]];
             }
         }
@@ -846,9 +868,9 @@ class QueryBuilder
         ]);
     }
 
-    public function generateDeleteSql()
+    protected function generateDeleteSql()
     {
-        $options = $this->_queryOptions ;
+        $options = $this->_queryOptions;
         if ($options) {
             $options = " {$options} ";
         }
@@ -863,14 +885,14 @@ class QueryBuilder
         ]);
     }
 
-    public function generateInsertSql()
+    protected function generateInsertSql()
     {
         list($tableName, $values) = $this->_update;
         $this->setAlias();
         return $this->getAdapter()->sqlInsert($tableName, $values, $this->_queryOptions);
     }
 
-    public function generateUpdateSql()
+    protected function generateUpdateSql()
     {
         list($tableName, $values) = $this->_update;
         $this->setAlias();
@@ -907,8 +929,7 @@ class QueryBuilder
     protected function buildHaving()
     {
         return $this->getAdapter()->sqlHaving(
-            $this->parseCondition($this->_having),
-            $this
+            $this->parseCondition($this->_having)
         );
     }
 
@@ -930,31 +951,9 @@ class QueryBuilder
         return empty($sql) ? '' : $sql;
     }
 
-    public function getSchema()
-    {
-        return $this->schema;
-    }
-
-    /**
-     * @param $tableName
-     * @param $columns
-     * @param null $options
-     * @param bool $ifNotExists
-     * @return string
-     */
-    public function createTable($tableName, $columns, $options = null, $ifNotExists = false)
-    {
-        return $this->getAdapter()->sqlCreateTable(
-            $tableName,
-            $columns,
-            $options,
-            $ifNotExists
-        );
-    }
-
     /**
      * @param array|string|Q $having lookups
-     * @return $this
+     * @return QueryBuilderInterface
      */
     public function setHaving($having)
     {
@@ -966,7 +965,20 @@ class QueryBuilder
     public function addHaving($having)
     {
         if (!empty($having)) {
-            $this->_having[] = $having;
+            $this->_having[] = $this->hydrate($having);
+        }
+
+        return $this;
+    }
+
+    public function setUnions(array $unions, $all = false)
+    {
+        $this->_union = [];
+
+        if (!empty($unions)) {
+            foreach ($unions as $union) {
+                $this->addUnion($union, $all);
+            }
         }
 
         return $this;
@@ -976,28 +988,6 @@ class QueryBuilder
     {
         $this->_union[] = [$union, $all];
         return $this;
-    }
-
-    /**
-     * @param $tableName
-     * @param $name
-     * @param $columns
-     * @return string
-     */
-    public function addPrimaryKey($tableName, $name, $columns)
-    {
-        return $this->getAdapter()->sqlAddPrimaryKey($tableName, $name, $columns);
-    }
-
-    /**
-     * @param $tableName
-     * @param $column
-     * @param $type
-     * @return string
-     */
-    public function alterColumn($tableName, $column, $type)
-    {
-        return $this->getAdapter()->sqlAlterColumn($tableName, $column, $type);
     }
 
     /**
@@ -1015,7 +1005,7 @@ class QueryBuilder
         $tableName = $this->getAdapter()->getRawTableName($table);
 
         if (strpos($tableName, '.') !== false) {
-            $tableName = substr($tableName, strpos($tableName, '.')+1);
+            $tableName = substr($tableName, strpos($tableName, '.') + 1);
         }
 
         return strtr('{table}_{count}', [
@@ -1121,7 +1111,8 @@ class QueryBuilder
     {
         if (strpos($order, '-') === false) {
             $direction = 'ASC';
-        } else {
+        }
+        else {
             $direction = 'DESC';
             $order = substr($order, 1);
         }
@@ -1158,12 +1149,14 @@ class QueryBuilder
                 }
                 else if ($column === '?') {
                     $order[] = $this->getAdapter()->getRandomOrder();
-                } else {
+                }
+                else {
                     list($newColumn, $direction) = $this->buildOrderJoin($column);
                     $order[$this->applyTableAlias($newColumn)] = $direction;
                 }
             }
-        } else {
+        }
+        else {
             $order[] = $this->buildOrderJoin($this->_order);
         }
 
@@ -1210,10 +1203,22 @@ class QueryBuilder
     {
         if ($this->_alias !== null && !is_array($this->_from)) {
             $from = [$this->_alias => $this->_from];
-        } else {
+        }
+        else {
             $from = $this->_from;
         }
         $sql = $this->getAdapter()->sqlFrom($from);
         return empty($sql) ? '' : ' FROM ' . $sql;
+    }
+
+    protected function hydrate($val)
+    {
+        if (is_object($val)) {
+            if ($val instanceof IToSql) {
+                $val->setQb($this);
+            }
+        }
+
+        return $val;
     }
 }

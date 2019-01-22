@@ -30,9 +30,6 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
         return strpos($name, '`') !== false || $name === '*' ? $name : '`' . $name . '`';
     }
 
-    /**
-     * @return array
-     */
     public function getLookupCollection()
     {
         return new LookupCollection();
@@ -90,40 +87,35 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
      */
     public function getBoolean($value = null)
     {
-        if (gettype($value) === 'boolean') {
+        if (is_bool($value)) {
             return (int)$value;
-        } else {
-            return $value ? 1 : 0;
         }
+
+        return $value ? 1 : 0;
     }
 
     protected function formatDateTime($value, $format)
     {
         if ($value instanceof \DateTime) {
             $value = $value->format($format);
-        } elseif ($value === null) {
+        }
+        elseif ($value === null) {
             $value = date($format);
-        } elseif (is_numeric($value)) {
+        }
+        elseif (is_numeric($value)) {
             $value = date($format, $value);
-        } elseif (is_string($value)) {
+        }
+        elseif (is_string($value)) {
             $value = date($format, strtotime($value));
         }
         return $value;
     }
 
-    /**
-     * @param null $value
-     * @return string
-     */
     public function getDateTime($value = null)
     {
         return $this->formatDateTime($value, "Y-m-d H:i:s");
     }
 
-    /**
-     * @param null $value
-     * @return string
-     */
     public function getDate($value = null)
     {
         return $this->formatDateTime($value, "Y-m-d");
@@ -170,7 +162,9 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
                 $sql .= ' OFFSET ' . $offset;
             }
             return ' ' . $sql;
-        } elseif ($this->hasOffset($offset)) {
+        }
+
+        if ($this->hasOffset($offset)) {
             // limit is not optional in MySQL
             // http://stackoverflow.com/a/271650/1106908
             // http://dev.mysql.com/doc/refman/5.0/en/select.html#idm47619502796240
@@ -196,7 +190,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
         }
         if (isset($row['Create Table'])) {
             $sql = $row['Create Table'];
-        } else {
+        }
+        else {
             $row = array_values($row);
             $sql = $row[1];
         }
@@ -221,7 +216,7 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
      */
     public function prepareValue($value)
     {
-        if (gettype($value) === 'boolean') {
+        if (is_bool($value)) {
             return (int)$value;
         }
         return parent::prepareValue($value);

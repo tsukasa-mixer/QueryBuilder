@@ -3,16 +3,16 @@
 namespace Tsukasa\QueryBuilder\Expression;
 
 use Tsukasa\QueryBuilder\Interfaces\IToSql;
-use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 abstract class AbstractExpression implements IToSql
 {
-    /** @var QueryBuilder */
+    /** @var QueryBuilderInterface */
     protected $qb;
     /** @var string */
     protected $_tableAlias;
 
-    public function setQB(QueryBuilder $queryBuilder)
+    public function setQB(QueryBuilderInterface $queryBuilder)
     {
         $this->qb = $queryBuilder;
         return $this;

@@ -13,11 +13,11 @@ class LookupCollection extends BaseLookupCollection
             'regex', 'iregex', 'second', 'year', 'minute',
             'hour', 'day', 'month', 'week_day'
         ];
-        if (in_array($lookup, $lookups)) {
+        if (in_array(strtolower($lookup), $lookups, true)) {
             return true;
-        } else {
-            return parent::has($lookup);
         }
+
+        return parent::has($lookup);
     }
 
     /**
@@ -29,7 +29,7 @@ class LookupCollection extends BaseLookupCollection
      */
     public function process(IAdapter $adapter, $lookup, $column, $value)
     {
-        switch ($lookup) {
+        switch (strtolower($lookup)) {
             case 'regex':
                 return $adapter->quoteColumn($column) . ' REGEXP ' . $adapter->quoteValue('/' . $value . '/');
 

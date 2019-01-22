@@ -1,7 +1,6 @@
 <?php
 
 namespace Tsukasa\QueryBuilder\Interfaces;
-use Tsukasa\QueryBuilder\QueryBuilder;
 
 /**
  * Interface ILookupBuilder
@@ -10,19 +9,19 @@ use Tsukasa\QueryBuilder\QueryBuilder;
 interface ILookupBuilder
 {
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilderInterface $queryBuilder
      * @param $lookup
      * @param $value
      * @return array
      */
-    public function parseLookup(QueryBuilder $queryBuilder, $lookup, $value);
+    public function parseLookup(QueryBuilderInterface $queryBuilder, $lookup, $value);
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilderInterface $queryBuilder
      * @param array $where
      * @return mixed
      */
-    public function parse(QueryBuilder $queryBuilder, array $where);
+    public function parse(QueryBuilderInterface $queryBuilder, array $where);
 
     /**
      * @param \Closure $callback

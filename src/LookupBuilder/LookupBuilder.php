@@ -3,11 +3,11 @@
 namespace Tsukasa\QueryBuilder\LookupBuilder;
 
 use Tsukasa\QueryBuilder\Exception\QBException;
-use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 class LookupBuilder extends Base
 {
-    public function parseLookup(QueryBuilder $queryBuilder, $rawLookup, $value)
+    public function parseLookup(QueryBuilderInterface $queryBuilder, $rawLookup, $value)
     {
         $nodesCount = substr_count($rawLookup, $this->separator);
         $lookupNodes = explode($this->separator, $rawLookup);
@@ -39,7 +39,7 @@ class LookupBuilder extends Base
         return $this->runCallback($queryBuilder, $lookupNodes, $value);
     }
 
-    public function buildJoin(QueryBuilder $queryBuilder, $lookup)
+    public function buildJoin(QueryBuilderInterface $queryBuilder, $lookup)
     {
         if (substr_count($lookup, $this->getSeparator()) > 0) {
             return $this->runJoinCallback($queryBuilder, explode($this->getSeparator(), $lookup));
@@ -48,7 +48,7 @@ class LookupBuilder extends Base
         return false;
     }
 
-    public function parse(QueryBuilder $queryBuilder, array $where)
+    public function parse(QueryBuilderInterface $queryBuilder, array $where)
     {
         $conditions = [];
         foreach ($where as $lookup => $value) {

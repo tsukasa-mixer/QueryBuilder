@@ -9,7 +9,7 @@ use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Interfaces\IAdapter;
 use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
 use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
-use Tsukasa\QueryBuilder\QueryBuilder;
+use Tsukasa\QueryBuilder\Interfaces\QueryBuilderInterface;
 
 abstract class Base implements ILookupBuilder
 {
@@ -108,7 +108,7 @@ abstract class Base implements ILookupBuilder
         return $column;
     }
 
-    public function runCallback(QueryBuilder $queryBuilder, $lookupNodes, $value)
+    public function runCallback(QueryBuilderInterface $queryBuilder, $lookupNodes, $value)
     {
         if ($this->columnCallback !== null) {
             if ($this->columnCallback instanceof \Closure) {
@@ -124,7 +124,7 @@ abstract class Base implements ILookupBuilder
         return null;
     }
 
-    public function runJoinCallback(QueryBuilder $queryBuilder, $lookupNodes)
+    public function runJoinCallback(QueryBuilderInterface $queryBuilder, $lookupNodes)
     {
         if ($this->joinCallback !== null) {
             if ($this->joinCallback instanceof \Closure) {
@@ -183,5 +183,5 @@ abstract class Base implements ILookupBuilder
         throw new QBException('Unknown lookup: ' . $lookup . ', column: ' . $column . ', value: ' . (is_array($value) ? print_r($value, true) : $value));
     }
 
-    abstract public function parse(QueryBuilder $queryBuilder, array $where);
+    abstract public function parse(QueryBuilderInterface $queryBuilder, array $where);
 }

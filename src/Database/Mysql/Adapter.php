@@ -92,7 +92,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
     {
         if (gettype($value) === 'boolean') {
             return (int)$value;
-        } else {
+        }
+        else {
             return $value ? 1 : 0;
         }
     }
@@ -101,11 +102,14 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
     {
         if ($value instanceof \DateTime) {
             $value = $value->format($format);
-        } elseif ($value === null) {
+        }
+        elseif ($value === null) {
             $value = date($format);
-        } elseif (is_numeric($value)) {
+        }
+        elseif (is_numeric($value)) {
             $value = date($format, $value);
-        } elseif (is_string($value)) {
+        }
+        elseif (is_string($value)) {
             $value = date($format, strtotime($value));
         }
         return $value;
@@ -170,7 +174,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
                 $sql .= ' OFFSET ' . $offset;
             }
             return ' ' . $sql;
-        } elseif ($this->hasOffset($offset)) {
+        }
+        elseif ($this->hasOffset($offset)) {
             // limit is not optional in MySQL
             // http://stackoverflow.com/a/271650/1106908
             // http://dev.mysql.com/doc/refman/5.0/en/select.html#idm47619502796240
@@ -196,7 +201,8 @@ class Adapter extends BaseAdapter implements IAdapter, ISQLGenerator
         }
         if (isset($row['Create Table'])) {
             $sql = $row['Create Table'];
-        } else {
+        }
+        else {
             $row = array_values($row);
             $sql = $row[1];
         }

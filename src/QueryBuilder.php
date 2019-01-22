@@ -182,7 +182,8 @@ class QueryBuilder implements QueryBuilderInterface
         $types = [static::TYPE_INSERT, static::TYPE_UPDATE, static::TYPE_DELETE, static::TYPE_SELECT];
         if (in_array($type, $types, true)) {
             $this->_type = $type;
-        } else {
+        }
+        else {
             throw new QBException('Incorrect type');
         }
 
@@ -255,12 +256,15 @@ class QueryBuilder implements QueryBuilderInterface
         if ($newSelect === false) {
             if ($tableAlias === null || $rawColumn === '*') {
                 $columns = $rawColumn;
-            } elseif (strpos($rawColumn, '.') !== false) {
+            }
+            elseif (strpos($rawColumn, '.') !== false) {
                 $columns = $rawColumn;
-            } else {
+            }
+            else {
                 $columns = $tableAlias . '.' . $rawColumn;
             }
-        } else {
+        }
+        else {
             list($alias, $joinColumn) = $newSelect;
             $columns = $alias . '.' . $joinColumn;
         }
@@ -286,17 +290,21 @@ class QueryBuilder implements QueryBuilderInterface
             foreach ($this->_select as $alias => $column) {
                 if ($column instanceof Aggregation) {
                     $select[$alias] = $this->buildSelectFromAggregation($column);
-                } else if (is_string($column)) {
+                }
+                else if (is_string($column)) {
                     if (strpos($column, 'SELECT') !== false) {
                         $select[$alias] = $column;
-                    } else {
+                    }
+                    else {
                         $select[$alias] = $this->addColumnAlias($builder->fetchColumnName($column));
                     }
-                } else {
+                }
+                else {
                     $select[$alias] = $column;
                 }
             }
-        } else if (is_string($this->_select)) {
+        }
+        else if (is_string($this->_select)) {
             $select = $this->addColumnAlias($this->_select);
         }
         return $this->getAdapter()->sqlSelect($select, $this->_queryOptions);
@@ -316,7 +324,8 @@ class QueryBuilder implements QueryBuilderInterface
 
         if ($alias) {
             $this->_select[$alias] = $select;
-        } else {
+        }
+        else {
             $this->_select[] = $select;
         }
 
@@ -333,7 +342,8 @@ class QueryBuilder implements QueryBuilderInterface
         if (is_string($select) && $newSelect = $this->getLookupBuilder()->buildJoin($this, $select)) {
             list($t_alias, $column) = $newSelect;
             $this->pushToSelect($t_alias . '.' . $column, $alias);
-        } else {
+        }
+        else {
             $this->pushToSelect(
                 $this->hydrate($select),
                 $alias
@@ -359,7 +369,8 @@ class QueryBuilder implements QueryBuilderInterface
             foreach ($select as $key => $part) {
                 $this->addSelect($part, $key);
             }
-        } else {
+        }
+        else {
             $this->addSelect($select);
         }
 
@@ -473,10 +484,12 @@ class QueryBuilder implements QueryBuilderInterface
     {
         if ($tableName instanceof QueryBuilderInterface) {
             $this->_join[] = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias, $index);
-        } else {
+        }
+        else {
             if ($joinType === 'RAW' && !empty($tableName)) {
                 $join = $this->getAdapter()->quoteSql($tableName);
-            } else {
+            }
+            else {
                 $join = $this->getAdapter()->sqlJoin($joinType, $tableName, $on, $alias);
             }
 
@@ -548,7 +561,8 @@ class QueryBuilder implements QueryBuilderInterface
             foreach ($columns as $column) {
                 $this->addOrder($column);
             }
-        } else {
+        }
+        else {
             $this->addOrder($columns);
         }
 
@@ -582,11 +596,13 @@ class QueryBuilder implements QueryBuilderInterface
                     }
 
                     $this->_order[] = $_column;
-                } else {
+                }
+                else {
                     $this->_order[] = current($temp);
                 }
             }
-        } else {
+        }
+        else {
             $this->_order[] = $column;
         }
 
@@ -675,14 +691,18 @@ class QueryBuilder implements QueryBuilderInterface
                 if (is_numeric($key)) {
                     if ($value instanceof IToSql) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } elseif ($value instanceof QueryBuilder) {
+                    }
+                    elseif ($value instanceof QueryBuilder) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } else if (is_array($value)) {
+                    }
+                    else if (is_array($value)) {
                         $parts[] = $this->parseCondition($value, $operator);
-                    } else if (is_string($value)) {
+                    }
+                    else if (is_string($value)) {
                         $parts[] = $value;
                     }
-                } else {
+                }
+                else {
                     $tableAlias = $this->getAlias();
                     $value = $this->getAdapter()->prepareValue($value);
 
@@ -703,13 +723,16 @@ class QueryBuilder implements QueryBuilderInterface
                 return '(' . implode(') ' . $operator . ' (', $parts) . ')';
             }
 
-        } else if ($condition instanceof IToSql) {
+        }
+        else if ($condition instanceof IToSql) {
             return $condition
                 ->setQb($this)
                 ->toSql();
-        } else if ($condition instanceof QueryBuilder) {
+        }
+        else if ($condition instanceof QueryBuilder) {
             return $condition->toSQL();
-        } else if (is_string($condition)) {
+        }
+        else if (is_string($condition)) {
             return $condition;
         }
 
@@ -722,7 +745,8 @@ class QueryBuilder implements QueryBuilderInterface
         foreach ($operands as $operand) {
             if (is_array($operand)) {
                 $operand = $this->buildCondition($operand, $params);
-            } else {
+            }
+            else {
                 $operand = $this->parseCondition($operand);
             }
             if ($operand !== '') {
@@ -783,7 +807,8 @@ class QueryBuilder implements QueryBuilderInterface
         foreach ($this->_whereAnd as $condition) {
             if (empty($where)) {
                 $where = ['and', $condition];
-            } else {
+            }
+            else {
                 $where = ['and', $where, ['and', $condition]];
             }
         }
@@ -791,7 +816,8 @@ class QueryBuilder implements QueryBuilderInterface
         foreach ($this->_whereOr as $condition) {
             if (empty($where)) {
                 $where = ['or', $condition];
-            } else {
+            }
+            else {
                 $where = ['or', $where, ['and', $condition]];
             }
         }
@@ -843,7 +869,7 @@ class QueryBuilder implements QueryBuilderInterface
 
     protected function generateDeleteSql()
     {
-        $options = $this->_queryOptions ;
+        $options = $this->_queryOptions;
         if ($options) {
             $options = " {$options} ";
         }
@@ -978,7 +1004,7 @@ class QueryBuilder implements QueryBuilderInterface
         $tableName = $this->getAdapter()->getRawTableName($table);
 
         if (strpos($tableName, '.') !== false) {
-            $tableName = substr($tableName, strpos($tableName, '.')+1);
+            $tableName = substr($tableName, strpos($tableName, '.') + 1);
         }
 
         return strtr('{table}_{count}', [
@@ -1084,7 +1110,8 @@ class QueryBuilder implements QueryBuilderInterface
     {
         if (strpos($order, '-') === false) {
             $direction = 'ASC';
-        } else {
+        }
+        else {
             $direction = 'DESC';
             $order = substr($order, 1);
         }
@@ -1121,12 +1148,14 @@ class QueryBuilder implements QueryBuilderInterface
                 }
                 else if ($column === '?') {
                     $order[] = $this->getAdapter()->getRandomOrder();
-                } else {
+                }
+                else {
                     list($newColumn, $direction) = $this->buildOrderJoin($column);
                     $order[$this->applyTableAlias($newColumn)] = $direction;
                 }
             }
-        } else {
+        }
+        else {
             $order[] = $this->buildOrderJoin($this->_order);
         }
 
@@ -1173,7 +1202,8 @@ class QueryBuilder implements QueryBuilderInterface
     {
         if ($this->_alias !== null && !is_array($this->_from)) {
             $from = [$this->_alias => $this->_from];
-        } else {
+        }
+        else {
             $from = $this->_from;
         }
         $sql = $this->getAdapter()->sqlFrom($from);

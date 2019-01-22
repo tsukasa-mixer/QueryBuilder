@@ -678,10 +678,9 @@ abstract class BaseAdapter implements ISQLGenerator
 
     /**
      * @param $having
-     * @param QueryBuilderInterface $queryBuilder
      * @return string
      */
-    public function sqlHaving($having, QueryBuilderInterface $queryBuilder)
+    public function sqlHaving($having)
     {
         if (empty($having)) {
             return '';
@@ -689,7 +688,6 @@ abstract class BaseAdapter implements ISQLGenerator
 
         if ($having instanceof IToSql) {
             $sql = $having
-                ->setQb($queryBuilder)
                 ->toSql();
         } else {
             $sql = $this->quoteSql($having);

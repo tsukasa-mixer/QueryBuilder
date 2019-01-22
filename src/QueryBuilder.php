@@ -333,10 +333,11 @@ class QueryBuilder implements QueryBuilderInterface
         if (is_string($select) && $newSelect = $this->getLookupBuilder()->buildJoin($this, $select)) {
             list($t_alias, $column) = $newSelect;
             $this->pushToSelect($t_alias . '.' . $column, $alias);
-        } else if ($select instanceof IToSql) {
-            $this->pushToSelect($select->setQb($this), $alias);
         } else {
-            $this->pushToSelect($select, $alias);
+            $this->pushToSelect(
+                $this->hydrate($select),
+                $alias
+            );
         }
 
         return $this;
@@ -742,7 +743,7 @@ class QueryBuilder implements QueryBuilderInterface
     public function addWhere($condition)
     {
         if (!empty($condition)) {
-            $this->_whereAnd[] = $condition;
+            $this->_whereAnd[] = $this->hydrate($condition);
         }
         return $this;
     }
@@ -761,7 +762,7 @@ class QueryBuilder implements QueryBuilderInterface
     public function addOrWhere($condition)
     {
         if (!empty($condition)) {
-            $this->_whereOr[] = $condition;
+            $this->_whereOr[] = $this->hydrate($condition);
         }
         return $this;
     }
@@ -960,7 +961,7 @@ class QueryBuilder implements QueryBuilderInterface
     public function addHaving($having)
     {
         if (!empty($having)) {
-            $this->_having[] = $having;
+            $this->_having[] = $this->hydrate($having);
         }
 
         return $this;
@@ -1209,5 +1210,16 @@ class QueryBuilder implements QueryBuilderInterface
         }
         $sql = $this->getAdapter()->sqlFrom($from);
         return empty($sql) ? '' : ' FROM ' . $sql;
+    }
+
+    protected function hydrate($val)
+    {
+        if (is_object($val)) {
+            if ($val instanceof IToSql) {
+                $val->setQb($this);
+            }
+        }
+
+        return $val;
     }
 }

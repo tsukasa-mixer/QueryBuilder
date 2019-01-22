@@ -118,7 +118,7 @@ interface QueryBuilderInterface
     public function getLookupBuilder();
 
     /**
-     * @return ISQLGenerator|IAdapter
+     * @return ISQLGenerator
      */
     public function getAdapter();
 

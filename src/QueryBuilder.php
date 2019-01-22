@@ -466,7 +466,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @return ISQLGenerator|IAdapter
+     * @return ISQLGenerator
      */
     public function getAdapter()
     {

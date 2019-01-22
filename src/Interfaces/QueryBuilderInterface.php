@@ -10,10 +10,6 @@ namespace Tsukasa\QueryBuilder\Interfaces;
 use Tsukasa\QueryBuilder\BaseAdapter;
 use Tsukasa\QueryBuilder\Exception\QBException;
 use Tsukasa\QueryBuilder\Expression\Expression;
-use Tsukasa\QueryBuilder\Interfaces\IAdapter;
-use Tsukasa\QueryBuilder\Interfaces\ILookupBuilder;
-use Tsukasa\QueryBuilder\Interfaces\ILookupCollection;
-use Tsukasa\QueryBuilder\Interfaces\IToSql;
 use Tsukasa\QueryBuilder\Q\Q;
 
 interface QueryBuilderInterface
@@ -167,6 +163,8 @@ interface QueryBuilderInterface
      */
     public function addOrder($column);
 
+    public function getOrder();
+
     /**
      * @param $tableName
      * @param array $rows
@@ -189,12 +187,6 @@ interface QueryBuilderInterface
 
     public function getJoins();
 
-    /**
-     * @param $condition
-     * @param string $operator
-     * @return string
-     */
-    public function parseCondition($condition, $operator = 'AND');
 
     /**
      * @param $condition
@@ -214,28 +206,11 @@ interface QueryBuilderInterface
 
     public function getSelect();
 
-    public function generateDeleteSql();
-
-    public function generateInsertSql();
-
-    public function generateUpdateSql();
-
     /**
      * @return string
      * @throws QBException
      */
     public function toSQL();
-
-    public function getSchema();
-
-    /**
-     * @param $tableName
-     * @param $columns
-     * @param null|string $options
-     * @param bool $ifNotExists
-     * @return string
-     */
-    public function createTable($tableName, $columns, $options = null, $ifNotExists = false);
 
     /**
      * @param array|string|Q $having lookups
@@ -247,21 +222,7 @@ interface QueryBuilderInterface
 
     public function addUnion($union, $all = false);
 
-    /**
-     * @param $tableName
-     * @param $name
-     * @param $columns
-     * @return string
-     */
-    public function addPrimaryKey($tableName, $name, $columns);
-
-    /**
-     * @param $tableName
-     * @param $column
-     * @param $type
-     * @return string
-     */
-    public function alterColumn($tableName, $column, $type);
+    public function addUnions(array $unions, $all = false);
 
     /**
      * Makes alias for joined table
@@ -282,5 +243,12 @@ interface QueryBuilderInterface
 
     public function getJoin($tableName);
 
-    public function getOrder();
+    /**
+     * For inner usage
+     *
+     * @param $condition
+     * @param string $operator
+     * @return string
+     */
+    public function parseCondition($condition, $operator = 'AND');
 }

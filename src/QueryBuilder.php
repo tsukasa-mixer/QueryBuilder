@@ -841,7 +841,7 @@ class QueryBuilder implements QueryBuilderInterface
         ]);
     }
 
-    public function generateDeleteSql()
+    protected function generateDeleteSql()
     {
         $options = $this->_queryOptions ;
         if ($options) {
@@ -858,14 +858,14 @@ class QueryBuilder implements QueryBuilderInterface
         ]);
     }
 
-    public function generateInsertSql()
+    protected function generateInsertSql()
     {
         list($tableName, $values) = $this->_update;
         $this->setAlias();
         return $this->getAdapter()->sqlInsert($tableName, $values, $this->_queryOptions);
     }
 
-    public function generateUpdateSql()
+    protected function generateUpdateSql()
     {
         list($tableName, $values) = $this->_update;
         $this->setAlias();
@@ -925,28 +925,6 @@ class QueryBuilder implements QueryBuilderInterface
         return empty($sql) ? '' : $sql;
     }
 
-    public function getSchema()
-    {
-        return $this->schema;
-    }
-
-    /**
-     * @param $tableName
-     * @param $columns
-     * @param null $options
-     * @param bool $ifNotExists
-     * @return string
-     */
-    public function createTable($tableName, $columns, $options = null, $ifNotExists = false)
-    {
-        return $this->getAdapter()->sqlCreateTable(
-            $tableName,
-            $columns,
-            $options,
-            $ifNotExists
-        );
-    }
-
     /**
      * @param array|string|Q $having lookups
      * @return QueryBuilderInterface
@@ -967,32 +945,23 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
+    public function setUnions(array $unions, $all = false)
+    {
+        $this->_union = [];
+
+        if ($unions) {
+            foreach ($unions as $union) {
+                $this->addUnion($union, $all);
+            }
+        }
+
+        return $this;
+    }
+
     public function addUnion($union, $all = false)
     {
         $this->_union[] = [$union, $all];
         return $this;
-    }
-
-    /**
-     * @param $tableName
-     * @param $name
-     * @param $columns
-     * @return string
-     */
-    public function addPrimaryKey($tableName, $name, $columns)
-    {
-        return $this->getAdapter()->sqlAddPrimaryKey($tableName, $name, $columns);
-    }
-
-    /**
-     * @param $tableName
-     * @param $column
-     * @param $type
-     * @return string
-     */
-    public function alterColumn($tableName, $column, $type)
-    {
-        return $this->getAdapter()->sqlAlterColumn($tableName, $column, $type);
     }
 
     /**

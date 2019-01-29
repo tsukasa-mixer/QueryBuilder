@@ -7,7 +7,7 @@
 
 * **Subject:** SQL Query builder
 * **Syntax:** Django-like lookups
-* **Documentation:** **[Russian](./docs/ru/readme.md)**
+* **Documentation:** **[Russian](./doc/ru/readme.md)**
 * **PHP version:** 5.6+
 * **Composer:** `composer require tsukasa/query_builder`
 * **Packagist:** 
